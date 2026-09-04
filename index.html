@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 模擬多職種カンファレンスルーム</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="screen active">
+      <div class="glass-panel setup-panel">
+        <h1>AI 模擬多職種カンファレンスルーム</h1>
+        <p class="subtitle">NST（栄養）カンファレンスへようこそ。<br>あなたの立場と難易度を選択してください。</p>
+        
+        <form id="setup-form">
+          <div class="form-group">
+            <label for="role-select">参加する立場（役割）</label>
+            <select id="role-select" required>
+              <optgroup label="学生">
+                <option value="医学生">医学生</option>
+                <option value="看護学生">看護学生</option>
+                <option value="薬学生">薬学生</option>
+                <option value="管理栄養士養成課程学生">管理栄養士養成課程学生</option>
+                <option value="臨床検査技師養成課程学生">臨床検査技師養成課程学生</option>
+                <option value="言語聴覚士（ST）養成課程学生">言語聴覚士（ST）養成課程学生</option>
+                <option value="理学療法士（PT）養成課程学生">理学療法士（PT）養成課程学生</option>
+                <option value="作業療法士（OT）養成課程学生">作業療法士（OT）養成課程学生</option>
+                <option value="その他の学生">その他の医療・福祉系学生</option>
+              </optgroup>
+              <optgroup label="新人医療従事者">
+                <option value="新人医師">新人医師</option>
+                <option value="新人看護師">新人看護師</option>
+                <option value="新人薬剤師">新人薬剤師</option>
+                <option value="新人管理栄養士">新人管理栄養士</option>
+                <option value="新人臨床検査技師">新人臨床検査技師</option>
+                <option value="新人ST">新人ST</option>
+                <option value="新人PT">新人PT</option>
+                <option value="新人OT">新人OT</option>
+                <option value="その他の新人">その他の新人医療・福祉職</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="difficulty-select">難易度</label>
+            <select id="difficulty-select" required>
+              <option value="beginner">初級（低栄養）</option>
+              <option value="intermediate">中級（低栄養＋嚥下障害）</option>
+              <option value="advanced">上級（複雑な病態＋本人希望）</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-primary">カンファレンスを開始する</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Conference Screen -->
+    <div id="conference-screen" class="screen">
+      <header class="chat-header glass-panel">
+        <div class="header-info">
+          <h2>NSTカンファレンス</h2>
+          <span id="current-role-badge" class="badge"></span>
+          <span id="current-difficulty-badge" class="badge outline"></span>
+        </div>
+      </header>
+
+      <div class="conference-layout">
+        <!-- Sidebar for Patient Info -->
+        <aside class="sidebar glass-panel">
+          <div class="sidebar-header">
+            <h3>症例情報</h3>
+          </div>
+          <div class="sidebar-content" id="patient-info-content">
+            <!-- Populated via JS -->
+          </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-wrapper">
+          <div id="chat-container" class="chat-container">
+            <div class="message system">
+              <div class="message-content">カンファレンスが開始されました。</div>
+            </div>
+          </div>
+
+          <div id="typing-indicator" class="typing-indicator hidden">
+            <span></span><span></span><span></span>
+          </div>
+
+          <div id="status-bar" class="status-bar"></div>
+
+          <footer class="chat-input-area glass-panel">
+            <div class="chat-input-header">
+              <span class="target-label">相手:</span>
+              <select id="target-select" class="target-select">
+                <option value="全体">全員</option>
+                <option value="看護師">看護師</option>
+                <option value="管理栄養士">管理栄養士</option>
+                <option value="薬剤師">薬剤師</option>
+                <option value="臨床検査技師">臨床検査技師</option>
+                <option value="ST">ST (言語聴覚士)</option>
+                <option value="医療ソーシャルワーカー">医療ソーシャルワーカー</option>
+              </select>
+            </div>
+            <div class="chat-input-row">
+              <button id="mic-btn" class="btn-icon" title="音声入力">
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+              </button>
+              <textarea id="message-input" rows="1" placeholder="メッセージを入力..."></textarea>
+              <button id="send-btn" class="btn-icon" title="送信">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </div>
+          </footer>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/scenarios.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
