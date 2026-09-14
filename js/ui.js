@@ -11,40 +11,54 @@ window.UI = {
     document.getElementById('current-difficulty-badge').textContent = difficultyName;
   },
 
+  // キャラクターのメタデータ定義
+  ROLE_MAP: {
+    '医師': { roleClass: 'doctor', icon: '🩺', displayName: '医師 佐藤' },
+    '看護師': { roleClass: 'nurse', icon: '🌸', displayName: '看護師 高橋' },
+    '管理栄養士': { roleClass: 'dietitian', icon: '🥗', displayName: '管理栄養士 佐々木' },
+    'ST': { roleClass: 'st', icon: '🗣️', displayName: 'ST 渡辺' },
+    '言語聴覚士': { roleClass: 'st', icon: '🗣️', displayName: 'ST 渡辺' },
+    '薬剤師': { roleClass: 'pharmacist', icon: '💊', displayName: '薬剤師 松本' },
+    '医療ソーシャルワーカー': { roleClass: 'msw', icon: '🤝', displayName: 'MSW 小林' },
+    'MSW': { roleClass: 'msw', icon: '🤝', displayName: 'MSW 小林' },
+    'ソーシャルワーカー': { roleClass: 'msw', icon: '🤝', displayName: 'MSW 小林' },
+    '臨床検査技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
+    '技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
+  },
+
+  getRoleMeta(sender) {
+    if (!sender) return { roleClass: '', icon: '💬', displayName: sender };
+    for (const [key, meta] of Object.entries(this.ROLE_MAP)) {
+      if (sender.includes(key)) {
+        return meta;
+      }
+    }
+    return { roleClass: 'ai', icon: '💬', displayName: sender };
+  },
+
   addMessage(sender, text, isUser = false, isSystem = false) {
     const container = document.getElementById('chat-container');
     const msgDiv = document.createElement('div');
     
     let roleClass = '';
+    let icon = '';
+    let displaySender = sender;
+
     if (!isSystem && !isUser && sender) {
-      if (sender.includes('看護師')) roleClass = 'nurse';
-      else if (sender.includes('管理栄養士')) roleClass = 'dietitian';
-      else if (sender.includes('薬剤師')) roleClass = 'pharmacist';
-      else if (sender.includes('臨床検査技師') || sender.includes('技師')) roleClass = 'technician';
-      else if (sender.includes('ST') || sender.includes('言語聴覚士')) roleClass = 'st';
-      else if (sender.includes('ソーシャルワーカー') || sender.includes('MSW')) roleClass = 'msw';
+      const meta = this.getRoleMeta(sender);
+      roleClass = meta.roleClass;
+      icon = meta.icon;
+      displaySender = `${icon} ${meta.displayName}`;
+    } else if (isUser) {
+      displaySender = `👤 あなた`;
     }
 
     msgDiv.className = `message ${isSystem ? 'system' : (isUser ? 'user' : 'ai')} ${roleClass}`;
     
-    if (!isSystem && sender) {
+    if (!isSystem && displaySender) {
       const senderDiv = document.createElement('div');
       senderDiv.className = 'message-sender';
-      
-      let emoji = '👤';
-      if (isUser) {
-        emoji = '🧑‍⚕️'; // 医師 (ユーザー)
-      } else {
-        if (roleClass === 'nurse') emoji = '👩‍⚕️';
-        else if (roleClass === 'dietitian') emoji = '🧑‍🍳';
-        else if (roleClass === 'pharmacist') emoji = '🧑‍🔬';
-        else if (roleClass === 'technician') emoji = '🔬';
-        else if (roleClass === 'st') emoji = '🗣️';
-        else if (roleClass === 'msw') emoji = '🧑‍💼';
-        else emoji = '🤖'; // その他のAI
-      }
-      
-      senderDiv.textContent = `${emoji} ${sender}`;
+      senderDiv.textContent = displaySender;
       msgDiv.appendChild(senderDiv);
     }
 
@@ -85,23 +99,22 @@ window.UI = {
 
   async parseAiResponseAndAddMessages(aiResponseText) {
     const lines = aiResponseText.split('\n');
+    const messageList = [];
     let currentSender = "AI";
     let currentMessage = [];
     
-    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-    const flushMessage = async () => {
+    const flushMessage = () => {
       if (currentMessage.length > 0) {
-        this.addMessage(currentSender, currentMessage.join('\n'), false, false);
+        messageList.push({
+          sender: currentSender,
+          text: currentMessage.join('\n')
+        });
         currentMessage = [];
-        this.toggleTypingIndicator(true);
-        await sleep(600); // 0.6秒のディレイを追加（発言の間隔）
-        this.toggleTypingIndicator(false);
       }
     };
 
     for (let line of lines) {
-      // コマンドのパース
+      // コマンドのパース（追加情報があればサイドバーに反映）
       const updateMatch = line.match(/【UPDATE_INFO:\s*(.*?)】/);
       if (updateMatch) {
         this.addSidebarInfo(updateMatch[1].trim());
@@ -109,13 +122,11 @@ window.UI = {
       }
 
       // Match "[看護師]: ...", "管理栄養士: ...", "**ST**: ..." etc.
-      // 役職名には「AI」プレフィックスが含まれない場合も対応
       const match = line.match(/^\*{0,2}\[?([^\:\]\*]+)\]?\*{0,2}\s*[:：]\s*(.*)$/);
       if (match) {
-        // "役割: 医師" などのシステムプロンプトの残骸を弾く
         const potentialSender = match[1].trim();
-        if (potentialSender.length > 0 && potentialSender.length < 20) {
-          await flushMessage();
+        if (potentialSender.length > 0 && potentialSender.length < 25) {
+          flushMessage();
           currentSender = potentialSender;
           if (match[2]) {
             currentMessage.push(match[2].trim());
@@ -128,7 +139,19 @@ window.UI = {
         currentMessage.push(line.trim());
       }
     }
-    await flushMessage();
+    flushMessage();
+
+    // 0.5〜0.8秒（650ms）の間隔で順番に発言を表示する
+    for (let i = 0; i < messageList.length; i++) {
+      const msg = messageList[i];
+      this.toggleTypingIndicator(true);
+      // 最初のメッセージ前は短め、2発言目以降は約650ms待機
+      const delay = i === 0 ? 300 : 650;
+      await new Promise(resolve => setTimeout(resolve, delay));
+      this.toggleTypingIndicator(false);
+      this.addMessage(msg.sender, msg.text, false, false);
+    }
+  },
   },
 
   toggleTypingIndicator(show) {
@@ -154,7 +177,21 @@ window.UI = {
   populatePatientInfo(scenario) {
     const container = document.getElementById('patient-info-content');
     const p = scenario.patient;
+    const aiRoles = scenario.ai_roles || [];
     
+    const rolesHtml = aiRoles.map(r => `
+      <div class="character-card">
+        <div class="character-header">
+          <span class="character-icon">${r.icon || '💬'}</span>
+          <div class="character-titles">
+            <span class="character-name">${r.name || r.role}</span>
+            <span class="character-role">${r.title || r.role}</span>
+          </div>
+        </div>
+        <p class="character-desc">${r.personality || r.description}</p>
+      </div>
+    `).join('');
+
     container.innerHTML = `
       <div class="patient-info-section">
         <h4>基本情報</h4>
@@ -170,6 +207,12 @@ window.UI = {
         <ul id="patient-dynamic-info-list">
           ${p.initial_info.map(info => `<li>${info}</li>`).join('')}
         </ul>
+      </div>
+      <div class="patient-info-section">
+        <h4>カンファレンス参加者</h4>
+        <div class="character-list">
+          ${rolesHtml}
+        </div>
       </div>
     `;
   },
