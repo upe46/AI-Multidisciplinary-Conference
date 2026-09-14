@@ -30,7 +30,21 @@ window.UI = {
     if (!isSystem && sender) {
       const senderDiv = document.createElement('div');
       senderDiv.className = 'message-sender';
-      senderDiv.textContent = sender;
+      
+      let emoji = '👤';
+      if (isUser) {
+        emoji = '🧑‍⚕️'; // 医師 (ユーザー)
+      } else {
+        if (roleClass === 'nurse') emoji = '👩‍⚕️';
+        else if (roleClass === 'dietitian') emoji = '🧑‍🍳';
+        else if (roleClass === 'pharmacist') emoji = '🧑‍🔬';
+        else if (roleClass === 'technician') emoji = '🔬';
+        else if (roleClass === 'st') emoji = '🗣️';
+        else if (roleClass === 'msw') emoji = '🧑‍💼';
+        else emoji = '🤖'; // その他のAI
+      }
+      
+      senderDiv.textContent = `${emoji} ${sender}`;
       msgDiv.appendChild(senderDiv);
     }
 
