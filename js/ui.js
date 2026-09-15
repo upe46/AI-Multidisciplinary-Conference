@@ -138,8 +138,9 @@ window.UI = {
 
   updateStatusBar(modelName) {
     const bar = document.getElementById('status-bar');
-    if (modelName) {
-      bar.innerHTML = `使用モデル: <span class="model-name">${modelName}</span>`;
+    if (bar) {
+      // ユーザーの要望により、使用モデル名は画面に表示しない
+      bar.style.display = 'none';
     }
   },
 

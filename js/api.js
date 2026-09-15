@@ -2,6 +2,7 @@ const API_KEY = "AQ.Ab8RN6Lcsb0Qz3kMPBce8pn3sYq-WbM2i1d6vZVsA7owhO9WFQ";
 
 // 優先順にモデルを試行する（2026年8月時点で利用可能なモデル）
 const MODEL_CANDIDATES = [
+  "gemini-3.8-flash",
   "gemini-3.7-flash",
   "gemini-2.5-flash",
   "gemini-3.5-flash-lite"
