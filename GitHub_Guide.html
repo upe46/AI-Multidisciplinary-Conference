@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>Antigravity × GitHub チーム開発マニュアル</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        body { font-family: 'Meiryo', 'Hiragino Kaku Gothic ProN', sans-serif; line-height: 1.6; margin: 0 auto; max-width: 900px; padding: 40px; color: #333; background-color: #fafbfc; }
+        .container { background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        h1 { color: #0366d6; border-bottom: 2px solid #0366d6; padding-bottom: 10px; text-align: center; }
+        h2 { color: #24292e; border-bottom: 1px solid #eaecef; padding-bottom: 5px; margin-top: 40px; }
+        h3 { color: #28a745; margin-top: 30px; }
+        .prompt-box { background-color: #f6f8fa; border-left: 4px solid #0366d6; padding: 15px; margin: 15px 0; border-radius: 0 4px 4px 0; font-family: monospace; font-size: 14px; }
+        .note { background-color: #fffbdd; padding: 15px; border-left: 4px solid #e3cc00; margin: 15px 0; border-radius: 4px; }
+        .mermaid { text-align: center; margin: 30px 0; padding: 20px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #eaecef; }
+        .print-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; background-color: #28a745; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; }
+        .print-btn:hover { background-color: #218838; }
+        @media print {
+            .print-btn { display: none; }
+            body { background-color: #fff; padding: 0; }
+            .container { box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="print-btn" onclick="window.print()">PDFとして保存 / 印刷</button>
+
+        <h1>Antigravity × GitHub チーム開発・完全マニュアル</h1>
+        <p>このマニュアルは、「Antigravity（AI）はインストールしたけれど、GitHubはこれから導入する」という初学者のチームが、迷うことなくアプリを共有して共同開発できるようになるまでの手順をまとめたものです。</p>
+        <p>難しいコマンド（黒い画面の操作）は極力使わず、<strong>「AIにお願いする（プロンプトを打つ）」</strong>ことで自動化する最強の開発フローを構築します。</p>
+
+        <h2>🗺️ 全体像（インフォグラフィック）</h2>
+        <p>チーム開発の流れを図解しています。最初は「共有の箱（GitHub）」を作り、AIの力で自動的にデータのやり取りを行います。（※図を右クリックして「画像をコピー」または「名前を付けて保存」することも可能です）</p>
+        
+        <div class="mermaid">
+graph TD
+    subgraph クラウド
+        GitHub["🐙 GitHub (共有の箱)<br>最新のアプリデータ"]
+        Pages("🌐 Webサイト<br>GitHub Pages")
+    end
+
+    subgraph メンバーAのPC
+        AI_A["🤖 Antigravity (AI)<br>【自動化ルール設定済み】"]
+    end
+
+    subgraph メンバーBのPC
+        AI_B["🤖 Antigravity (AI)<br>【自動化ルール設定済み】"]
+    end
+
+    GitHub -->|1. 初期ダウンロード clone| AI_A
+    GitHub -->|1. 初期ダウンロード clone| AI_B
+
+    GitHub -.->|2. 作業開始時に自動受信 pull| AI_A
+    AI_A ==>|3. アプリを改造 プロンプト指示| AI_A
+    AI_A -->|4. 作業完了時に自動送信 push| GitHub
+
+    GitHub -.->|2. 作業開始時に自動受信 pull| AI_B
+    AI_B ==>|3. アプリを改造 プロンプト指示| AI_B
+    AI_B -->|4. 作業完了時に自動送信 push| GitHub
+
+    GitHub ===>|5. 自動反映 1〜2分| Pages
+
+    classDef cloud fill:#f8f9fa,stroke:#24292e,stroke-width:2px,color:#24292e;
+    classDef pc fill:#e6f2ff,stroke:#0366d6,stroke-width:2px,color:#0366d6;
+    classDef web fill:#e6ffed,stroke:#28a745,stroke-width:2px,color:#28a745;
+    
+    class GitHub cloud;
+    class AI_A,AI_B pc;
+    class Pages web;
+        </div>
+
+        <h2>1. 【準備】GitHubに共有の「箱」を作る</h2>
+        <p>まずはクラウド上（インターネット上）に、ソースコードを共有するための箱（リポジトリ）を作ります。</p>
+        <ol>
+            <li>GitHub にアクセスし、アカウントを作成します（チームで1つのアカウントを共有するか、代表者が作ります）。</li>
+            <li>ログイン後、画面右上の「＋」ボタンから <strong>「New repository」</strong> をクリックします。</li>
+            <li>Repository name にアプリの名前（例：my-app）を入力します。</li>
+            <li><strong>「Public」</strong>（公開）を選びます（後でテスト用URLを発行するため）。</li>
+            <li>一番下の <strong>「Create repository」</strong> 緑色ボタンを押します。</li>
+            <li>次の画面で表示されるURL（例: https://github.com/名前/my-app.git）をコピーしておきます。</li>
+        </ol>
+        <div class="note">💡 チームメンバーは全員GitHubアカウントを作成し、このリポジトリの「Settings」>「Collaborators」から招待しておくとベストです。</div>
+
+        <h2>2. 【連携】AntigravityとGitHubを繋ぐ</h2>
+        <p>Antigravityを立ち上げ、先ほど作った「箱」を自分のPCにダウンロードします。</p>
+        <ol>
+            <li>空のフォルダを自分のPC（デスクトップ等）に作ります。</li>
+            <li>Antigravityでその空フォルダを開きます。</li>
+            <li>Antigravityのチャット画面で、AIに以下のプロンプトを送ります。</li>
+        </ol>
+        <div class="prompt-box">
+            <strong>💬 AIへのプロンプト例：</strong><br><br>
+            先ほどGitHubにリポジトリを作りました。このURL（https://github.com/〜〜.git）の中身を、今開いているフォルダにダウンロード（git clone）してください。
+        </div>
+        <p>※この時、GitHubのログイン画面が出たら指示に従ってログインします。</p>
+
+        <h2>3. 【自動化設定】AIにチーム開発のルールを教え込む</h2>
+        <p>初学者が一番つまづくのが「Gitの同期（PullやPush）」です。これをすべてAIに自動でやらせる設定を最初に行います。</p>
+        <div class="prompt-box">
+            <strong>💬 AIへのプロンプト例：</strong><br><br>
+            チームで共同開発を行います。以下の内容でAIの行動ルール（.agents/AGENTS.md）を作成し、作成後は自動的にGitHubへアップロード（git push）してください。<br><br>
+            【ルール内容】<br>
+            1. 作業を始める前には、必ず自動で git pull を行い、他のメンバーの最新状態を受け取ること。<br>
+            2. コードの修正や作成が終わったら、必ず自動で git add .、git commit、git push を行い、GitHubに自動でアップロードすること。ユーザーに手動操作を求めないこと。
+        </div>
+        <p>これで、AIが勝手にルールファイルを作成し、GitHubにアップロードしてくれます。以降、どのメンバーがAntigravityを使っても、自動的にデータが同期される最強の環境が完成します。</p>
+
+        <h2>4. 【公開設定】テストプレイ用のURLを発行する</h2>
+        <p>完成した（あるいは作り途中の）アプリをスマホなどで確認できるようにします。</p>
+        <ol>
+            <li>GitHubのリポジトリ画面を開き、<strong>「Settings」</strong> をクリックします。</li>
+            <li>左メニューから <strong>「Pages」</strong> をクリックします。</li>
+            <li>Sourceを <strong>「Deploy from a branch」</strong> にし、Branchを <strong>「main」</strong> にして「Save」を押します。</li>
+            <li>1〜2分待つと、画面上部にURLが発行されます。これをチームで共有します。</li>
+        </ol>
+
+        <h2>5. 【日常の作業】みんなでアプリを改造していく</h2>
+        <p>準備は整いました！今後の開発は、他のメンバーも含め以下のプロンプトの型を使ってAIにお願いするだけで進みます。</p>
+        
+        <h3>パターンA：新しく作業を始める時</h3>
+        <p>自分が作業を始める前は、必ず他の人が作った最新データを受け取るため、AIに一言声をかけます。</p>
+        <div class="prompt-box">
+            <strong>💬 AIへのプロンプト例：</strong><br><br>
+            作業を始めます。まずは最新のデータをGitHubから同期（git pull）してください。
+        </div>
+
+        <h3>パターンB：アプリの機能を追加・変更する時</h3>
+        <p>AIに要望を伝えます。AIは作業が終わると、ルールに従って自動的にGitHubへ変更をアップロード（Push）してくれます。</p>
+        <div class="prompt-box">
+            <strong>💬 AIへのプロンプト例：</strong><br><br>
+            トップページに「お問い合わせ」ボタンを追加して、クリックしたらポップアップが出るようにしてください。<br>
+            作業完了後、ルールに従ってGitHubへPushし、テスト用URLに反映させてください。
+        </div>
+
+        <h3>⚠️ エラーなどでAIが自動アップロード（Push）に失敗した場合</h3>
+        <p>たまに自動アップロードが止まることがあります。その時は直接AIにお願いします。</p>
+        <div class="prompt-box">
+            <strong>💬 AIへのプロンプト例：</strong><br><br>
+            今の変更を保存して、GitHubにアップロード（git add, commit, push）してください。
+        </div>
+    </div>
+</body>
+</html>

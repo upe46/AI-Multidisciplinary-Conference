@@ -83,15 +83,20 @@ window.UI = {
     container.scrollTop = container.scrollHeight;
   },
 
-  parseAiResponseAndAddMessages(aiResponseText) {
+  async parseAiResponseAndAddMessages(aiResponseText) {
     const lines = aiResponseText.split('\n');
     let currentSender = "AI";
     let currentMessage = [];
     
-    const flushMessage = () => {
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    const flushMessage = async () => {
       if (currentMessage.length > 0) {
         this.addMessage(currentSender, currentMessage.join('\n'), false, false);
         currentMessage = [];
+        this.toggleTypingIndicator(true);
+        await sleep(600); // 0.6秒のディレイを追加（発言の間隔）
+        this.toggleTypingIndicator(false);
       }
     };
 
@@ -103,7 +108,7 @@ window.UI = {
         // "役割: 医師" などのシステムプロンプトの残骸を弾く
         const potentialSender = match[1].trim();
         if (potentialSender.length > 0 && potentialSender.length < 20) {
-          flushMessage();
+          await flushMessage();
           currentSender = potentialSender;
           if (match[2]) {
             currentMessage.push(match[2].trim());
@@ -116,7 +121,7 @@ window.UI = {
         currentMessage.push(line.trim());
       }
     }
-    flushMessage();
+    await flushMessage();
   },
 
   toggleTypingIndicator(show) {

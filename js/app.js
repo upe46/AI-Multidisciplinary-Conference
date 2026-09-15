@@ -21,7 +21,7 @@ async function startConference() {
   try {
     const responseText = await window.API.sendMessage(null, true);
     window.UI.toggleTypingIndicator(false);
-    window.UI.parseAiResponseAndAddMessages(responseText);
+    await window.UI.parseAiResponseAndAddMessages(responseText);
     window.UI.updateStatusBar(window.API.activeModel);
     setInputEnabled(true);
     document.getElementById('message-input').focus();
@@ -77,7 +77,7 @@ async function handleSendMessage() {
   try {
     const responseText = await window.API.sendMessage(apiMessage);
     window.UI.toggleTypingIndicator(false);
-    window.UI.parseAiResponseAndAddMessages(responseText);
+    await window.UI.parseAiResponseAndAddMessages(responseText);
     setInputEnabled(true);
     inputEl.focus();
   } catch (error) {
@@ -86,9 +86,9 @@ async function handleSendMessage() {
       // リトライ：最後のユーザーメッセージを再送信
       window.UI.toggleTypingIndicator(true);
       setInputEnabled(false);
-      window.API.sendMessage(apiMessage).then(resp => {
+      window.API.sendMessage(apiMessage).then(async resp => {
         window.UI.toggleTypingIndicator(false);
-        window.UI.parseAiResponseAndAddMessages(resp);
+        await window.UI.parseAiResponseAndAddMessages(resp);
         setInputEnabled(true);
         inputEl.focus();
       }).catch(err => {
