@@ -154,7 +154,6 @@ window.UI = {
       this.addMessage(msg.sender, msg.text, false, false);
     }
   },
-  },
 
   toggleTypingIndicator(show) {
     const indicator = document.getElementById('typing-indicator');
