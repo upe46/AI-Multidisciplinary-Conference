@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="utf-8">
     <title>Antigravity × GitHub チーム開発マニュアル</title>
@@ -8,69 +9,153 @@
         mermaid.initialize({ startOnLoad: true, theme: 'default' });
     </script>
     <style>
-        body { font-family: 'Meiryo', 'Hiragino Kaku Gothic ProN', sans-serif; line-height: 1.6; margin: 0 auto; max-width: 900px; padding: 40px; color: #333; background-color: #fafbfc; }
-        .container { background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        h1 { color: #0366d6; border-bottom: 2px solid #0366d6; padding-bottom: 10px; text-align: center; }
-        h2 { color: #24292e; border-bottom: 1px solid #eaecef; padding-bottom: 5px; margin-top: 40px; }
-        h3 { color: #28a745; margin-top: 30px; }
-        .prompt-box { background-color: #f6f8fa; border-left: 4px solid #0366d6; padding: 15px; margin: 15px 0; border-radius: 0 4px 4px 0; font-family: monospace; font-size: 14px; }
-        .note { background-color: #fffbdd; padding: 15px; border-left: 4px solid #e3cc00; margin: 15px 0; border-radius: 4px; }
-        .mermaid { text-align: center; margin: 30px 0; padding: 20px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #eaecef; }
-        .print-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; background-color: #28a745; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; }
-        .print-btn:hover { background-color: #218838; }
+        body {
+            font-family: 'Meiryo', 'Hiragino Kaku Gothic ProN', sans-serif;
+            line-height: 1.6;
+            margin: 0 auto;
+            max-width: 900px;
+            padding: 40px;
+            color: #333;
+            background-color: #fafbfc;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #0366d6;
+            border-bottom: 2px solid #0366d6;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #24292e;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 5px;
+            margin-top: 40px;
+        }
+
+        h3 {
+            color: #28a745;
+            margin-top: 30px;
+        }
+
+        .prompt-box {
+            background-color: #f6f8fa;
+            border-left: 4px solid #0366d6;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .note {
+            background-color: #fffbdd;
+            padding: 15px;
+            border-left: 4px solid #e3cc00;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .mermaid {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #eaecef;
+        }
+
+        .print-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+
+        .print-btn:hover {
+            background-color: #218838;
+        }
+
         @media print {
-            .print-btn { display: none; }
-            body { background-color: #fff; padding: 0; }
-            .container { box-shadow: none; padding: 0; }
+            .print-btn {
+                display: none;
+            }
+
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <button class="print-btn" onclick="window.print()">PDFとして保存 / 印刷</button>
 
         <h1>Antigravity × GitHub チーム開発・完全マニュアル</h1>
-        <p>このマニュアルは、「Antigravity（AI）はインストールしたけれど、GitHubはこれから導入する」という初学者のチームが、迷うことなくアプリを共有して共同開発できるようになるまでの手順をまとめたものです。</p>
+        <p>このマニュアルは、「Antigravity（AI）はインストールしたけれど、GitHubはこれから導入する」という初学者のチームが、迷うことなくアプリを共有して共同開発できるようになるまでの手順をまとめたものです。
+        </p>
         <p>難しいコマンド（黒い画面の操作）は極力使わず、<strong>「AIにお願いする（プロンプトを打つ）」</strong>ことで自動化する最強の開発フローを構築します。</p>
 
         <h2>🗺️ 全体像（インフォグラフィック）</h2>
         <p>チーム開発の流れを図解しています。最初は「共有の箱（GitHub）」を作り、AIの力で自動的にデータのやり取りを行います。（※図を右クリックして「画像をコピー」または「名前を付けて保存」することも可能です）</p>
-        
+
         <div class="mermaid">
-graph TD
-    subgraph クラウド
-        GitHub["🐙 GitHub (共有の箱)<br>最新のアプリデータ"]
-        Pages("🌐 Webサイト<br>GitHub Pages")
-    end
+            graph TD
+            subgraph クラウド
+            GitHub["🐙 GitHub (共有の箱)<br>最新のアプリデータ"]
+            Pages("🌐 Webサイト<br>GitHub Pages")
+            end
 
-    subgraph メンバーAのPC
-        AI_A["🤖 Antigravity (AI)<br>【自動化ルール設定済み】"]
-    end
+            subgraph メンバーAのPC
+            AI_A["🤖 Antigravity (AI)<br>【自動化ルール設定済み】"]
+            end
 
-    subgraph メンバーBのPC
-        AI_B["🤖 Antigravity (AI)<br>【自動化ルール設定済み】"]
-    end
+            subgraph メンバーBのPC
+            AI_B["🤖 Antigravity (AI)<br>【自動化ルール設定済み】"]
+            end
 
-    GitHub -->|1. 初期ダウンロード clone| AI_A
-    GitHub -->|1. 初期ダウンロード clone| AI_B
+            GitHub -->|1. 初期ダウンロード clone| AI_A
+            GitHub -->|1. 初期ダウンロード clone| AI_B
 
-    GitHub -.->|2. 作業開始時に自動受信 pull| AI_A
-    AI_A ==>|3. アプリを改造 プロンプト指示| AI_A
-    AI_A -->|4. 作業完了時に自動送信 push| GitHub
+            GitHub -.->|2. 作業開始時に自動受信 pull| AI_A
+            AI_A ==>|3. アプリを改造 プロンプト指示| AI_A
+            AI_A -->|4. 作業完了時に自動送信 push| GitHub
 
-    GitHub -.->|2. 作業開始時に自動受信 pull| AI_B
-    AI_B ==>|3. アプリを改造 プロンプト指示| AI_B
-    AI_B -->|4. 作業完了時に自動送信 push| GitHub
+            GitHub -.->|2. 作業開始時に自動受信 pull| AI_B
+            AI_B ==>|3. アプリを改造 プロンプト指示| AI_B
+            AI_B -->|4. 作業完了時に自動送信 push| GitHub
 
-    GitHub ===>|5. 自動反映 1〜2分| Pages
+            GitHub ===>|5. 自動反映 1〜2分| Pages
 
-    classDef cloud fill:#f8f9fa,stroke:#24292e,stroke-width:2px,color:#24292e;
-    classDef pc fill:#e6f2ff,stroke:#0366d6,stroke-width:2px,color:#0366d6;
-    classDef web fill:#e6ffed,stroke:#28a745,stroke-width:2px,color:#28a745;
-    
-    class GitHub cloud;
-    class AI_A,AI_B pc;
-    class Pages web;
+            classDef cloud fill:#f8f9fa,stroke:#24292e,stroke-width:2px,color:#24292e;
+            classDef pc fill:#e6f2ff,stroke:#0366d6,stroke-width:2px,color:#0366d6;
+            classDef web fill:#e6ffed,stroke:#28a745,stroke-width:2px,color:#28a745;
+
+            class GitHub cloud;
+            class AI_A,AI_B pc;
+            class Pages web;
         </div>
 
         <h2>1. 【準備】GitHubに共有の「箱」を作る</h2>
@@ -120,7 +205,7 @@ graph TD
 
         <h2>5. 【日常の作業】みんなでアプリを改造していく</h2>
         <p>準備は整いました！今後の開発は、他のメンバーも含め以下のプロンプトの型を使ってAIにお願いするだけで進みます。</p>
-        
+
         <h3>パターンA：新しく作業を始める時</h3>
         <p>自分が作業を始める前は、必ず他の人が作った最新データを受け取るため、AIに一言声をかけます。</p>
         <div class="prompt-box">
@@ -144,4 +229,5 @@ graph TD
         </div>
     </div>
 </body>
+
 </html>
