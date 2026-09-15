@@ -34,6 +34,7 @@ ${scenario.title}
 患者: ${scenario.patient.age}歳 ${scenario.patient.gender} (${scenario.patient.primary_disease})
 背景: ${scenario.patient.background}
 初期情報: ${scenario.patient.initial_info.join(' / ')}
+隠された情報（徐々に開示する）: ${scenario.patient.hidden_info ? scenario.patient.hidden_info.join(' / ') : 'なし'}
 
 【参加するAI専門職】
 ${aiRolesDesc}

@@ -100,7 +100,14 @@ window.UI = {
       }
     };
 
-    for (const line of lines) {
+    for (let line of lines) {
+      // コマンドのパース
+      const updateMatch = line.match(/【UPDATE_INFO:\s*(.*?)】/);
+      if (updateMatch) {
+        this.addSidebarInfo(updateMatch[1].trim());
+        line = line.replace(/【UPDATE_INFO:\s*.*?】/, '').trim();
+      }
+
       // Match "[看護師]: ...", "管理栄養士: ...", "**ST**: ..." etc.
       // 役職名には「AI」プレフィックスが含まれない場合も対応
       const match = line.match(/^\*{0,2}\[?([^\:\]\*]+)\]?\*{0,2}\s*[:：]\s*(.*)$/);
@@ -159,12 +166,30 @@ window.UI = {
         <p>${p.background}</p>
       </div>
       <div class="patient-info-section">
-        <h4>初期情報</h4>
-        <ul>
+        <h4>初期・判明した情報</h4>
+        <ul id="patient-dynamic-info-list">
           ${p.initial_info.map(info => `<li>${info}</li>`).join('')}
         </ul>
       </div>
     `;
+  },
+
+  addSidebarInfo(infoText) {
+    const list = document.getElementById('patient-dynamic-info-list');
+    if (list) {
+      const li = document.createElement('li');
+      li.textContent = infoText;
+      li.style.color = '#d73a49'; // 新規追加を強調（赤系）
+      li.style.fontWeight = 'bold';
+      li.style.opacity = '0';
+      li.style.transition = 'opacity 0.5s ease-in';
+      list.appendChild(li);
+      
+      // アニメーション用
+      setTimeout(() => {
+        li.style.opacity = '1';
+      }, 50);
+    }
   },
 
   setupModal() {
