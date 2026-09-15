@@ -14,16 +14,18 @@ window.UI = {
   // キャラクターのメタデータ定義
   ROLE_MAP: {
     '医師': { roleClass: 'doctor', icon: '🩺', displayName: '医師 佐藤' },
-    '看護師': { roleClass: 'nurse', icon: '🌸', displayName: '看護師 高橋' },
     '管理栄養士': { roleClass: 'dietitian', icon: '🥗', displayName: '管理栄養士 佐々木' },
+    '栄養士': { roleClass: 'dietitian', icon: '🥗', displayName: '管理栄養士 佐々木' },
+    '看護師': { roleClass: 'nurse', icon: '🌸', displayName: '看護師 高橋' },
     'ST': { roleClass: 'st', icon: '🗣️', displayName: 'ST 渡辺' },
     '言語聴覚士': { roleClass: 'st', icon: '🗣️', displayName: 'ST 渡辺' },
     '薬剤師': { roleClass: 'pharmacist', icon: '💊', displayName: '薬剤師 松本' },
+    '臨床検査技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
+    '検査技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
+    '技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
     '医療ソーシャルワーカー': { roleClass: 'msw', icon: '🤝', displayName: 'MSW 小林' },
     'MSW': { roleClass: 'msw', icon: '🤝', displayName: 'MSW 小林' },
     'ソーシャルワーカー': { roleClass: 'msw', icon: '🤝', displayName: 'MSW 小林' },
-    '臨床検査技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
-    '技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
   },
 
   getRoleMeta(sender) {
