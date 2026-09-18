@@ -18,23 +18,23 @@ function getSelectedDifficulty() {
 }
 
 function syncRadioCardsUI() {
-  // Update conference card styles
-  document.querySelectorAll('.conference-card').forEach(card => {
-    const radio = card.querySelector('input[type="radio"]');
+  // Update conference button styles
+  document.querySelectorAll('.conf-btn').forEach(btn => {
+    const radio = btn.querySelector('input[type="radio"]');
     if (radio && radio.checked) {
-      card.classList.add('selected');
+      btn.classList.add('selected');
     } else {
-      card.classList.remove('selected');
+      btn.classList.remove('selected');
     }
   });
 
-  // Update difficulty card styles
-  document.querySelectorAll('.difficulty-card').forEach(card => {
-    const radio = card.querySelector('input[type="radio"]');
+  // Update difficulty button styles
+  document.querySelectorAll('.diff-btn').forEach(btn => {
+    const radio = btn.querySelector('input[type="radio"]');
     if (radio && radio.checked) {
-      card.classList.add('selected');
+      btn.classList.add('selected');
     } else {
-      card.classList.remove('selected');
+      btn.classList.remove('selected');
     }
   });
 }
@@ -214,7 +214,7 @@ function init() {
     new window.SpeechInput(inputEl, micBtn);
   }
 
-  // Initial sync of radio cards
+  // Initial sync of button UI
   syncRadioCardsUI();
 }
 

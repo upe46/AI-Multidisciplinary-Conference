@@ -12,198 +12,104 @@
     <!-- Setup Screen -->
     <div id="setup-screen" class="screen active">
       <div class="glass-panel setup-panel">
-        <header class="setup-header">
-          <div class="brand-badge">医療教育 AIシミュレーション</div>
-          <h1 class="main-title">AI模擬多職種カンファレンスルーム</h1>
-          <p class="subtitle">参加するカンファレンス・役割・難易度を選択してください</p>
-        </header>
+        <h1>AI模擬多職種カンファレンスルーム</h1>
+        <p class="subtitle">参加するカンファレンス・役割・難易度を選択してください</p>
         
         <form id="setup-form">
-          <!-- Step 1: Conference Selection -->
-          <section class="form-section">
-            <div class="section-heading">
-              <span class="step-num">1</span>
-              <div class="heading-text">
-                <h3>参加するカンファレンスを選択してください</h3>
-                <span class="step-desc">目的に合わせた臨床カンファレンスを選びます（クリックで選択）</span>
-              </div>
-            </div>
-            <div class="conference-grid">
-              <!-- 1. NST -->
-              <label class="conference-card selected" for="conf-nst">
-                <input type="radio" name="conference" id="conf-nst" value="nst" checked>
-                <div class="card-body">
-                  <div class="card-top">
-                    <span class="card-icon">🥗</span>
-                    <span class="card-tag">栄養管理・摂食嚥下</span>
-                  </div>
-                  <div class="card-title">NST（栄養）カンファレンス</div>
-                  <p class="card-desc">脳梗塞後の摂食量低下とむせのある高齢患者に対し、栄養改善と安全な経口摂取を多職種で検討します。</p>
-                  <div class="card-roles">参加: 医師・管理栄養士・看護師・ST・薬剤師・検査技師</div>
-                </div>
+          <!-- 1. カンファレンスの種類 -->
+          <div class="form-group">
+            <label>カンファレンスの種類</label>
+            <div class="conference-buttons">
+              <label class="conf-btn selected">
+                <input type="radio" name="conference" value="nst" checked>
+                <span class="conf-icon">🥗</span>
+                <span class="conf-name">NST（栄養）</span>
               </label>
 
-              <!-- 2. 退院支援 -->
-              <label class="conference-card" for="conf-discharge">
-                <input type="radio" name="conference" id="conf-discharge" value="discharge">
-                <div class="card-body">
-                  <div class="card-top">
-                    <span class="card-icon">🏠</span>
-                    <span class="card-tag">在宅復帰・地域連携</span>
-                  </div>
-                  <div class="card-title">退院支援カンファレンス</div>
-                  <p class="card-desc">大腿骨骨折術後の独居高齢患者の在宅復帰に向け、ADL評価・介護サービス調整・家族連携を協議します。</p>
-                  <div class="card-roles">参加: 医師・病棟看護師・MSW・PT・薬剤師・ケアマネジャー</div>
-                </div>
+              <label class="conf-btn">
+                <input type="radio" name="conference" value="discharge">
+                <span class="conf-icon">🏠</span>
+                <span class="conf-name">退院支援</span>
               </label>
 
-              <!-- 3. リハビリ -->
-              <label class="conference-card" for="conf-rehab">
-                <input type="radio" name="conference" id="conf-rehab" value="rehab">
-                <div class="card-body">
-                  <div class="card-top">
-                    <span class="card-icon">🚶</span>
-                    <span class="card-tag">機能回復・生活自立</span>
-                  </div>
-                  <div class="card-title">リハビリテーションカンファレンス</div>
-                  <p class="card-desc">回復期脳卒中患者の麻痺・高次脳機能障害に対し、多職種連携による日常生活自立プランを策定します。</p>
-                  <div class="card-roles">参加: リハ医・PT・OT・ST・病棟看護師・MSW</div>
-                </div>
+              <label class="conf-btn">
+                <input type="radio" name="conference" value="rehab">
+                <span class="conf-icon">🚶</span>
+                <span class="conf-name">リハビリ</span>
               </label>
 
-              <!-- 4. 褥瘡対策 -->
-              <label class="conference-card" for="conf-pressure_ulcer">
-                <input type="radio" name="conference" id="conf-pressure_ulcer" value="pressure_ulcer">
-                <div class="card-body">
-                  <div class="card-top">
-                    <span class="card-icon">🩹</span>
-                    <span class="card-tag">創傷管理・除圧ケア</span>
-                  </div>
-                  <div class="card-title">褥瘡対策カンファレンス</div>
-                  <p class="card-desc">寝たきり高齢患者の仙骨部深部褥瘡に対し、DESIGN-R評価・外用薬選定・体位変換計画を立案します。</p>
-                  <div class="card-roles">参加: 皮膚科/主治医・WOC認定看護師・管理栄養士・PT・薬剤師</div>
-                </div>
+              <label class="conf-btn">
+                <input type="radio" name="conference" value="pressure_ulcer">
+                <span class="conf-icon">🩹</span>
+                <span class="conf-name">褥瘡対策</span>
               </label>
 
-              <!-- 5. 緩和ケア -->
-              <label class="conference-card" for="conf-palliative">
-                <input type="radio" name="conference" id="conf-palliative" value="palliative">
-                <div class="card-body">
-                  <div class="card-top">
-                    <span class="card-icon">🕊️</span>
-                    <span class="card-tag">全人的苦痛・ACP</span>
-                  </div>
-                  <div class="card-title">緩和ケアカンファレンス</div>
-                  <p class="card-desc">進行がん患者のがん性疼痛・倦怠感の緩和と、患者と家族の意向（ACP）を尊重した療養方針を検討します。</p>
-                  <div class="card-roles">参加: 緩和ケア医・緩和ケア認定看護師・薬剤師・公認心理師・MSW</div>
-                </div>
+              <label class="conf-btn">
+                <input type="radio" name="conference" value="palliative">
+                <span class="conf-icon">🕊️</span>
+                <span class="conf-name">緩和ケア</span>
               </label>
 
-              <!-- 6. 医療安全 -->
-              <label class="conference-card" for="conf-safety">
-                <input type="radio" name="conference" id="conf-safety" value="safety">
-                <div class="card-body">
-                  <div class="card-top">
-                    <span class="card-icon">🛡️</span>
-                    <span class="card-tag">リスク分析・再発防止</span>
-                  </div>
-                  <div class="card-title">医療安全カンファレンス</div>
-                  <p class="card-desc">夜間せん妄によるベッド柵乗り越え転倒・点滴抜去インシデントの原因分析（RCA）と再発防止策を立案します。</p>
-                  <div class="card-roles">参加: 医療安全管理者・主治医・病棟師長・薬剤師・臨床工学技士・PT</div>
-                </div>
+              <label class="conf-btn">
+                <input type="radio" name="conference" value="safety">
+                <span class="conf-icon">🛡️</span>
+                <span class="conf-name">医療安全</span>
               </label>
             </div>
-          </section>
-
-          <!-- Step 2: Role Selection -->
-          <section class="form-section">
-            <div class="section-heading">
-              <span class="step-num">2</span>
-              <div class="heading-text">
-                <h3>参加する立場（役割）</h3>
-                <span class="step-desc">シミュレーション内であなたが担当する職種・立場を選択してください</span>
-              </div>
-            </div>
-            <div class="select-wrapper">
-              <select id="role-select" name="role" required>
-                <optgroup label="学生">
-                  <option value="医学生" selected>医学生</option>
-                  <option value="看護学生">看護学生</option>
-                  <option value="薬学生">薬学生</option>
-                  <option value="管理栄養士養成課程学生">管理栄養士養成課程学生</option>
-                  <option value="臨床検査技師養成課程学生">臨床検査技師養成課程学生</option>
-                  <option value="言語聴覚士（ST）養成課程学生">言語聴覚士（ST）養成課程学生</option>
-                  <option value="理学療法士（PT）養成課程学生">理学療法士（PT）養成課程学生</option>
-                  <option value="作業療法士（OT）養成課程学生">作業療法士（OT）養成課程学生</option>
-                  <option value="その他の学生">その他の医療・福祉系学生</option>
-                </optgroup>
-                <optgroup label="新人医療従事者">
-                  <option value="新人医師">新人医師</option>
-                  <option value="新人看護師">新人看護師</option>
-                  <option value="新人薬剤師">新人薬剤師</option>
-                  <option value="新人管理栄養士">新人管理栄養士</option>
-                  <option value="新人臨床検査技師">新人臨床検査技師</option>
-                  <option value="新人ST">新人ST（言語聴覚士）</option>
-                  <option value="新人PT">新人PT（理学療法士）</option>
-                  <option value="新人OT">新人OT（作業療法士）</option>
-                  <option value="その他の新人">その他の新人医療・福祉職</option>
-                </optgroup>
-              </select>
-            </div>
-          </section>
-
-          <!-- Step 3: Difficulty Selection -->
-          <section class="form-section">
-            <div class="section-heading">
-              <span class="step-num">3</span>
-              <div class="heading-text">
-                <h3>難易度</h3>
-                <span class="step-desc">あなたの習熟度に合わせて難易度を選択してください（クリックで選択）</span>
-              </div>
-            </div>
-            <div class="difficulty-grid">
-              <label class="difficulty-card selected" for="diff-beginner">
-                <input type="radio" name="difficulty" id="diff-beginner" value="beginner" checked>
-                <div class="card-body">
-                  <div class="diff-header">
-                    <span class="diff-badge diff-beginner">初級</span>
-                    <span class="diff-theme">基礎的な問題把握</span>
-                  </div>
-                  <p class="diff-desc">AI専門職からヒントが多く提示されます。全体の流れや多職種の役割を掴むのに最適です。</p>
-                </div>
-              </label>
-
-              <label class="difficulty-card" for="diff-intermediate">
-                <input type="radio" name="difficulty" id="diff-intermediate" value="intermediate">
-                <div class="card-body">
-                  <div class="diff-header">
-                    <span class="diff-badge diff-intermediate">中級</span>
-                    <span class="diff-theme">複数課題の統合と連携</span>
-                  </div>
-                  <p class="diff-desc">AIからのヒントが減り、自発的な質問や他職種連携のアプローチが求められます。</p>
-                </div>
-              </label>
-
-              <label class="difficulty-card" for="diff-advanced">
-                <input type="radio" name="difficulty" id="diff-advanced" value="advanced">
-                <div class="card-body">
-                  <div class="diff-header">
-                    <span class="diff-badge diff-advanced">上級</span>
-                    <span class="diff-theme">複雑病態・意思決定支援</span>
-                  </div>
-                  <p class="diff-desc">AIは答えを誘導しません。複雑な課題の調整と自発的な提案・主導が必要です。</p>
-                </div>
-              </label>
-            </div>
-          </section>
-
-          <!-- Submit and Guidance -->
-          <div class="setup-actions">
-            <button type="submit" id="start-conference-btn" class="btn-primary">
-              <span>カンファレンスを開始する</span>
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
           </div>
+
+          <!-- 2. 参加する立場（役割） -->
+          <div class="form-group">
+            <label for="role-select">参加する立場（役割）</label>
+            <select id="role-select" required>
+              <optgroup label="学生">
+                <option value="医学生" selected>医学生</option>
+                <option value="看護学生">看護学生</option>
+                <option value="薬学生">薬学生</option>
+                <option value="管理栄養士養成課程学生">管理栄養士養成課程学生</option>
+                <option value="臨床検査技師養成課程学生">臨床検査技師養成課程学生</option>
+                <option value="言語聴覚士（ST）養成課程学生">言語聴覚士（ST）養成課程学生</option>
+                <option value="理学療法士（PT）養成課程学生">理学療法士（PT）養成課程学生</option>
+                <option value="作業療法士（OT）養成課程学生">作業療法士（OT）養成課程学生</option>
+                <option value="その他の学生">その他の医療・福祉系学生</option>
+              </optgroup>
+              <optgroup label="新人医療従事者">
+                <option value="新人医師">新人医師</option>
+                <option value="新人看護師">新人看護師</option>
+                <option value="新人薬剤師">新人薬剤師</option>
+                <option value="新人管理栄養士">新人管理栄養士</option>
+                <option value="新人臨床検査技師">新人臨床検査技師</option>
+                <option value="新人ST">新人ST</option>
+                <option value="新人PT">新人PT</option>
+                <option value="新人OT">新人OT</option>
+                <option value="その他の新人">その他の新人医療・福祉職</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- 3. 難易度 -->
+          <div class="form-group">
+            <label>難易度</label>
+            <div class="difficulty-buttons">
+              <label class="diff-btn selected">
+                <input type="radio" name="difficulty" value="beginner" checked>
+                <span class="diff-dot beginner"></span>
+                <span>初級</span>
+              </label>
+              <label class="diff-btn">
+                <input type="radio" name="difficulty" value="intermediate">
+                <span class="diff-dot intermediate"></span>
+                <span>中級</span>
+              </label>
+              <label class="diff-btn">
+                <input type="radio" name="difficulty" value="advanced">
+                <span class="diff-dot advanced"></span>
+                <span>上級</span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">カンファレンスを開始する</button>
         </form>
       </div>
     </div>
