@@ -15,7 +15,7 @@
         <h1>AI模擬多職種カンファレンスルーム</h1>
         <p class="subtitle">参加するカンファレンス・役割・難易度を選択してください</p>
         
-        <form id="setup-form">
+        <form id="setup-form" onsubmit="return false;">
           <!-- 1. カンファレンスの種類 -->
           <div class="form-group">
             <label>カンファレンスの種類</label>
@@ -61,7 +61,7 @@
           <!-- 2. 参加する立場（役割） -->
           <div class="form-group">
             <label for="role-select">参加する立場（役割）</label>
-            <select id="role-select" required>
+            <select id="role-select">
               <optgroup label="学生">
                 <option value="医学生" selected>医学生</option>
                 <option value="看護学生">看護学生</option>
@@ -109,7 +109,7 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-primary">カンファレンスを開始する</button>
+          <button type="button" id="start-conference-btn" class="btn-primary">カンファレンスを開始する</button>
         </form>
       </div>
     </div>

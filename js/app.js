@@ -70,6 +70,7 @@ async function startConference() {
     const msgInput = document.getElementById('message-input');
     if (msgInput) msgInput.focus();
   } catch (error) {
+    console.error("Conference start error:", error);
     window.UI.toggleTypingIndicator(false);
     window.UI.addErrorMessage("カンファレンスの開始に失敗しました: " + error.message, () => startConference());
     setInputEnabled(true);
@@ -77,20 +78,23 @@ async function startConference() {
 }
 
 async function handleSetupSubmit(e) {
-  if (e) e.preventDefault();
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
   
   const confId = getSelectedConferenceId();
   const role = getSelectedRole();
   const difficulty = getSelectedDifficulty();
 
-  currentScenario = window.SCENARIOS[confId] || window.SCENARIOS.nst;
+  currentScenario = (window.SCENARIOS && window.SCENARIOS[confId]) ? window.SCENARIOS[confId] : (window.SCENARIOS ? window.SCENARIOS.nst : null);
   if (!currentScenario) {
-    alert("シナリオデータの取得に失敗しました。");
+    alert("シナリオデータの取得に失敗しました。ページを再読み込みしてください。");
     return;
   }
 
   const difficultyObj = currentScenario.difficulty_levels ? currentScenario.difficulty_levels[difficulty] : null;
-  const difficultyName = difficultyObj ? difficultyObj.name : "標準";
+  const difficultyName = difficultyObj ? difficultyObj.name : "初級";
 
   // Reset chat and setup UI
   resetChatContainer();
@@ -136,6 +140,7 @@ async function handleSendMessage() {
     setInputEnabled(true);
     if (inputEl) inputEl.focus();
   } catch (error) {
+    console.error("Send message error:", error);
     window.UI.toggleTypingIndicator(false);
     window.UI.addErrorMessage("送信に失敗しました: " + error.message, () => {
       window.UI.toggleTypingIndicator(true);
@@ -185,7 +190,12 @@ function init() {
     });
   }
 
-  // Setup form submit
+  // Setup form & start button click
+  const startBtn = document.getElementById('start-conference-btn');
+  if (startBtn) {
+    startBtn.addEventListener('click', handleSetupSubmit);
+  }
+
   const setupForm = document.getElementById('setup-form');
   if (setupForm) {
     setupForm.addEventListener('submit', handleSetupSubmit);
