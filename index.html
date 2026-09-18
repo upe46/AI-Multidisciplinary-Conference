@@ -25,13 +25,94 @@
               <span class="step-num">1</span>
               <div class="heading-text">
                 <h3>参加するカンファレンスを選択してください</h3>
-                <span class="step-desc">目的に合わせた臨床カンファレンスを選択します</span>
+                <span class="step-desc">目的に合わせた臨床カンファレンスを選びます（クリックで選択）</span>
               </div>
             </div>
-            <div id="conference-grid" class="conference-grid">
-              <!-- Populated dynamically via JS from window.CONFERENCE_LIST -->
+            <div class="conference-grid">
+              <!-- 1. NST -->
+              <label class="conference-card selected" for="conf-nst">
+                <input type="radio" name="conference" id="conf-nst" value="nst" checked>
+                <div class="card-body">
+                  <div class="card-top">
+                    <span class="card-icon">🥗</span>
+                    <span class="card-tag">栄養管理・摂食嚥下</span>
+                  </div>
+                  <div class="card-title">NST（栄養）カンファレンス</div>
+                  <p class="card-desc">脳梗塞後の摂食量低下とむせのある高齢患者に対し、栄養改善と安全な経口摂取を多職種で検討します。</p>
+                  <div class="card-roles">参加: 医師・管理栄養士・看護師・ST・薬剤師・検査技師</div>
+                </div>
+              </label>
+
+              <!-- 2. 退院支援 -->
+              <label class="conference-card" for="conf-discharge">
+                <input type="radio" name="conference" id="conf-discharge" value="discharge">
+                <div class="card-body">
+                  <div class="card-top">
+                    <span class="card-icon">🏠</span>
+                    <span class="card-tag">在宅復帰・地域連携</span>
+                  </div>
+                  <div class="card-title">退院支援カンファレンス</div>
+                  <p class="card-desc">大腿骨骨折術後の独居高齢患者の在宅復帰に向け、ADL評価・介護サービス調整・家族連携を協議します。</p>
+                  <div class="card-roles">参加: 医師・病棟看護師・MSW・PT・薬剤師・ケアマネジャー</div>
+                </div>
+              </label>
+
+              <!-- 3. リハビリ -->
+              <label class="conference-card" for="conf-rehab">
+                <input type="radio" name="conference" id="conf-rehab" value="rehab">
+                <div class="card-body">
+                  <div class="card-top">
+                    <span class="card-icon">🚶</span>
+                    <span class="card-tag">機能回復・生活自立</span>
+                  </div>
+                  <div class="card-title">リハビリテーションカンファレンス</div>
+                  <p class="card-desc">回復期脳卒中患者の麻痺・高次脳機能障害に対し、多職種連携による日常生活自立プランを策定します。</p>
+                  <div class="card-roles">参加: リハ医・PT・OT・ST・病棟看護師・MSW</div>
+                </div>
+              </label>
+
+              <!-- 4. 褥瘡対策 -->
+              <label class="conference-card" for="conf-pressure_ulcer">
+                <input type="radio" name="conference" id="conf-pressure_ulcer" value="pressure_ulcer">
+                <div class="card-body">
+                  <div class="card-top">
+                    <span class="card-icon">🩹</span>
+                    <span class="card-tag">創傷管理・除圧ケア</span>
+                  </div>
+                  <div class="card-title">褥瘡対策カンファレンス</div>
+                  <p class="card-desc">寝たきり高齢患者の仙骨部深部褥瘡に対し、DESIGN-R評価・外用薬選定・体位変換計画を立案します。</p>
+                  <div class="card-roles">参加: 皮膚科/主治医・WOC認定看護師・管理栄養士・PT・薬剤師</div>
+                </div>
+              </label>
+
+              <!-- 5. 緩和ケア -->
+              <label class="conference-card" for="conf-palliative">
+                <input type="radio" name="conference" id="conf-palliative" value="palliative">
+                <div class="card-body">
+                  <div class="card-top">
+                    <span class="card-icon">🕊️</span>
+                    <span class="card-tag">全人的苦痛・ACP</span>
+                  </div>
+                  <div class="card-title">緩和ケアカンファレンス</div>
+                  <p class="card-desc">進行がん患者のがん性疼痛・倦怠感の緩和と、患者と家族の意向（ACP）を尊重した療養方針を検討します。</p>
+                  <div class="card-roles">参加: 緩和ケア医・緩和ケア認定看護師・薬剤師・公認心理師・MSW</div>
+                </div>
+              </label>
+
+              <!-- 6. 医療安全 -->
+              <label class="conference-card" for="conf-safety">
+                <input type="radio" name="conference" id="conf-safety" value="safety">
+                <div class="card-body">
+                  <div class="card-top">
+                    <span class="card-icon">🛡️</span>
+                    <span class="card-tag">リスク分析・再発防止</span>
+                  </div>
+                  <div class="card-title">医療安全カンファレンス</div>
+                  <p class="card-desc">夜間せん妄によるベッド柵乗り越え転倒・点滴抜去インシデントの原因分析（RCA）と再発防止策を立案します。</p>
+                  <div class="card-roles">参加: 医療安全管理者・主治医・病棟師長・薬剤師・臨床工学技士・PT</div>
+                </div>
+              </label>
             </div>
-            <input type="hidden" id="selected-conference-id" value="">
           </section>
 
           <!-- Step 2: Role Selection -->
@@ -44,10 +125,9 @@
               </div>
             </div>
             <div class="select-wrapper">
-              <select id="role-select" required>
-                <option value="" disabled selected>参加する立場を選択してください</option>
+              <select id="role-select" name="role" required>
                 <optgroup label="学生">
-                  <option value="医学生">医学生</option>
+                  <option value="医学生" selected>医学生</option>
                   <option value="看護学生">看護学生</option>
                   <option value="薬学生">薬学生</option>
                   <option value="管理栄養士養成課程学生">管理栄養士養成課程学生</option>
@@ -78,44 +158,48 @@
               <span class="step-num">3</span>
               <div class="heading-text">
                 <h3>難易度</h3>
-                <span class="step-desc">あなたの習熟度に合わせてシミュレーション難易度を選択してください</span>
+                <span class="step-desc">あなたの習熟度に合わせて難易度を選択してください（クリックで選択）</span>
               </div>
             </div>
             <div class="difficulty-grid">
-              <div class="difficulty-card" data-difficulty="beginner">
-                <div class="diff-header">
-                  <span class="diff-badge diff-beginner">初級</span>
-                  <span class="diff-theme">基礎的な問題把握</span>
+              <label class="difficulty-card selected" for="diff-beginner">
+                <input type="radio" name="difficulty" id="diff-beginner" value="beginner" checked>
+                <div class="card-body">
+                  <div class="diff-header">
+                    <span class="diff-badge diff-beginner">初級</span>
+                    <span class="diff-theme">基礎的な問題把握</span>
+                  </div>
+                  <p class="diff-desc">AI専門職からヒントが多く提示されます。全体の流れや多職種の役割を掴むのに最適です。</p>
                 </div>
-                <p class="diff-desc">AI専門職からヒントが多く提示されます。全体の流れや多職種の役割を掴むのに最適です。</p>
-              </div>
+              </label>
 
-              <div class="difficulty-card" data-difficulty="intermediate">
-                <div class="diff-header">
-                  <span class="diff-badge diff-intermediate">中級</span>
-                  <span class="diff-theme">複数課題の統合と連携</span>
+              <label class="difficulty-card" for="diff-intermediate">
+                <input type="radio" name="difficulty" id="diff-intermediate" value="intermediate">
+                <div class="card-body">
+                  <div class="diff-header">
+                    <span class="diff-badge diff-intermediate">中級</span>
+                    <span class="diff-theme">複数課題の統合と連携</span>
+                  </div>
+                  <p class="diff-desc">AIからのヒントが減り、自発的な質問や他職種連携のアプローチが求められます。</p>
                 </div>
-                <p class="diff-desc">AIからのヒントが減り、自発的な質問や他職種連携のアプローチが求められます。</p>
-              </div>
+              </label>
 
-              <div class="difficulty-card" data-difficulty="advanced">
-                <div class="diff-header">
-                  <span class="diff-badge diff-advanced">上級</span>
-                  <span class="diff-theme">複雑病態・意思決定支援</span>
+              <label class="difficulty-card" for="diff-advanced">
+                <input type="radio" name="difficulty" id="diff-advanced" value="advanced">
+                <div class="card-body">
+                  <div class="diff-header">
+                    <span class="diff-badge diff-advanced">上級</span>
+                    <span class="diff-theme">複雑病態・意思決定支援</span>
+                  </div>
+                  <p class="diff-desc">AIは答えを誘導しません。複雑な課題の調整と自発的な提案・主導が必要です。</p>
                 </div>
-                <p class="diff-desc">AIは答えを誘導しません。複雑な課題の調整と自発的な提案・主導が必要です。</p>
-              </div>
+              </label>
             </div>
-            <input type="hidden" id="selected-difficulty" value="">
           </section>
 
           <!-- Submit and Guidance -->
           <div class="setup-actions">
-            <div id="setup-validation-msg" class="validation-msg">
-              <span class="validation-icon">ℹ️</span>
-              <span class="validation-text">① カンファレンスの種類、② 参加する立場、③ 難易度を選択してください</span>
-            </div>
-            <button type="submit" id="start-conference-btn" class="btn-primary" disabled>
+            <button type="submit" id="start-conference-btn" class="btn-primary">
               <span>カンファレンスを開始する</span>
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </button>

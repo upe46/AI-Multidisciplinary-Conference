@@ -4,8 +4,8 @@
   --primary-light: #EEF2FF;
   --bg-gradient-start: #EEF2FF;
   --bg-gradient-end: #E0E7FF;
-  --glass-bg: rgba(255, 255, 255, 0.78);
-  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.7);
   --text-main: #1F2937;
   --text-muted: #6B7280;
   --msg-user-bg: #4F46E5;
@@ -171,48 +171,48 @@ body {
 }
 
 .conference-card {
-  background: rgba(255, 255, 255, 0.65);
-  border: 2px solid transparent;
+  display: block;
+  position: relative;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(229, 231, 235, 0.9);
   border-radius: 1rem;
-  padding: 1rem 1.1rem;
+  padding: 1.1rem;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  position: relative;
   user-select: none;
 }
 
-.conference-card:hover {
-  background: rgba(255, 255, 255, 0.95);
-  transform: translateY(-2px);
-  border-color: rgba(79, 70, 229, 0.25);
-  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.08);
-}
-
-.conference-card.selected {
-  background: #FFFFFF;
-  border-color: var(--primary-color);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.18);
-  transform: translateY(-2px);
-}
-
-.conference-card.selected::after {
-  content: "✓";
+.conference-card input[type="radio"],
+.difficulty-card input[type="radio"] {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  width: 20px;
-  height: 20px;
-  background: var(--primary-color);
-  color: white;
-  border-radius: 50%;
+  top: 1rem;
+  right: 1rem;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.conference-card:hover {
+  background: rgba(255, 255, 255, 0.98);
+  transform: translateY(-2px);
+  border-color: rgba(79, 70, 229, 0.35);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.1);
+}
+
+.conference-card:has(input:checked),
+.conference-card.selected {
+  background: #FFFFFF !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+.card-body {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: bold;
+  flex-direction: column;
+  gap: 0.45rem;
+  pointer-events: none; /* クリックを親のlabelに通す */
 }
 
 .card-top {
@@ -220,6 +220,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
+  padding-right: 1.8rem; /* ラジオボタンと重ならないよう余白 */
 }
 
 .card-icon {
@@ -237,6 +238,7 @@ body {
   border: 1px solid rgba(79, 70, 229, 0.15);
 }
 
+.conference-card:has(input:checked) .card-tag,
 .conference-card.selected .card-tag {
   background: var(--primary-color);
   color: white;
@@ -246,7 +248,7 @@ body {
   font-size: 0.95rem;
   font-weight: 700;
   color: #111827;
-  padding-right: 1.2rem;
+  padding-right: 1.5rem;
 }
 
 .card-desc {
@@ -292,48 +294,30 @@ body {
 }
 
 .difficulty-card {
-  background: rgba(255, 255, 255, 0.65);
-  border: 2px solid transparent;
+  display: block;
+  position: relative;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(229, 231, 235, 0.9);
   border-radius: 1rem;
   padding: 1rem;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
   user-select: none;
-  position: relative;
 }
 
 .difficulty-card:hover {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   transform: translateY(-2px);
-  border-color: rgba(79, 70, 229, 0.25);
-  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.08);
+  border-color: rgba(79, 70, 229, 0.35);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.1);
 }
 
+.difficulty-card:has(input:checked),
 .difficulty-card.selected {
-  background: #FFFFFF;
-  border-color: var(--primary-color);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.18);
+  background: #FFFFFF !important;
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.18) !important;
   transform: translateY(-2px);
-}
-
-.difficulty-card.selected::after {
-  content: "✓";
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  width: 18px;
-  height: 18px;
-  background: var(--primary-color);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: bold;
 }
 
 .diff-header {
@@ -341,6 +325,7 @@ body {
   align-items: center;
   gap: 0.45rem;
   margin-bottom: 0.2rem;
+  padding-right: 1.8rem;
 }
 
 .diff-badge {
@@ -388,26 +373,6 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0.85rem;
-}
-
-.validation-msg {
-  font-size: 0.85rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 0.6rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: rgba(238, 242, 255, 0.8);
-  color: #4338CA;
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.validation-msg.ready {
-  background: #ECFDF5;
-  color: #065F46;
-  border-color: #6EE7B7;
 }
 
 .btn-primary {

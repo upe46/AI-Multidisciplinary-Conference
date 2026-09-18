@@ -1,35 +1,42 @@
 let currentScenario = null;
-let selectedConferenceId = null;
-let selectedRole = "";
-let selectedDifficulty = "";
 let isSending = false;
+let isInitialized = false;
 
-function updateValidationState() {
-  const startBtn = document.getElementById('start-conference-btn');
-  const validationMsg = document.getElementById('setup-validation-msg');
-  const validationText = validationMsg ? validationMsg.querySelector('.validation-text') : null;
-  const validationIcon = validationMsg ? validationMsg.querySelector('.validation-icon') : null;
+function getSelectedConferenceId() {
+  const checked = document.querySelector('input[name="conference"]:checked');
+  return checked ? checked.value : 'nst';
+}
 
-  const missingItems = [];
-  if (!selectedConferenceId) missingItems.push('① カンファレンスの種類');
-  if (!selectedRole) missingItems.push('② 参加する立場');
-  if (!selectedDifficulty) missingItems.push('③ 難易度');
+function getSelectedRole() {
+  const select = document.getElementById('role-select');
+  return select ? select.value : '医学生';
+}
 
-  if (missingItems.length === 0) {
-    if (startBtn) startBtn.disabled = false;
-    if (validationMsg) {
-      validationMsg.classList.add('ready');
-      if (validationText) validationText.textContent = 'すべての項目が選択されました。「カンファレンスを開始する」を押してください。';
-      if (validationIcon) validationIcon.textContent = '✅';
+function getSelectedDifficulty() {
+  const checked = document.querySelector('input[name="difficulty"]:checked');
+  return checked ? checked.value : 'beginner';
+}
+
+function syncRadioCardsUI() {
+  // Update conference card styles
+  document.querySelectorAll('.conference-card').forEach(card => {
+    const radio = card.querySelector('input[type="radio"]');
+    if (radio && radio.checked) {
+      card.classList.add('selected');
+    } else {
+      card.classList.remove('selected');
     }
-  } else {
-    if (startBtn) startBtn.disabled = true;
-    if (validationMsg) {
-      validationMsg.classList.remove('ready');
-      if (validationText) validationText.textContent = `選択してください: ${missingItems.join('、')}`;
-      if (validationIcon) validationIcon.textContent = 'ℹ️';
+  });
+
+  // Update difficulty card styles
+  document.querySelectorAll('.difficulty-card').forEach(card => {
+    const radio = card.querySelector('input[type="radio"]');
+    if (radio && radio.checked) {
+      card.classList.add('selected');
+    } else {
+      card.classList.remove('selected');
     }
-  }
+  });
 }
 
 function setInputEnabled(enabled) {
@@ -70,32 +77,31 @@ async function startConference() {
 }
 
 async function handleSetupSubmit(e) {
-  e.preventDefault();
+  if (e) e.preventDefault();
   
-  if (!selectedConferenceId || !selectedRole || !selectedDifficulty) {
-    updateValidationState();
-    return;
-  }
+  const confId = getSelectedConferenceId();
+  const role = getSelectedRole();
+  const difficulty = getSelectedDifficulty();
 
-  currentScenario = window.SCENARIOS[selectedConferenceId];
+  currentScenario = window.SCENARIOS[confId] || window.SCENARIOS.nst;
   if (!currentScenario) {
     alert("シナリオデータの取得に失敗しました。");
     return;
   }
 
-  const difficultyObj = currentScenario.difficulty_levels ? currentScenario.difficulty_levels[selectedDifficulty] : null;
+  const difficultyObj = currentScenario.difficulty_levels ? currentScenario.difficulty_levels[difficulty] : null;
   const difficultyName = difficultyObj ? difficultyObj.name : "標準";
 
   // Reset chat and setup UI
   resetChatContainer();
-  window.UI.setBadges(currentScenario.title, selectedRole, difficultyName);
+  window.UI.setBadges(currentScenario.title, role, difficultyName);
   window.UI.populatePatientInfo(currentScenario);
   window.UI.populateTargetSelect(currentScenario);
   window.UI.setupModal();
   window.UI.showScreen('conference-screen');
   
   // Initialize AI
-  window.API.setSystemPrompt(currentScenario, selectedRole, selectedDifficulty);
+  window.API.setSystemPrompt(currentScenario, role, difficulty);
   
   // Start conference
   startConference();
@@ -106,7 +112,7 @@ async function handleSendMessage() {
 
   const inputEl = document.getElementById('message-input');
   const targetEl = document.getElementById('target-select');
-  const text = inputEl.value.trim();
+  const text = inputEl ? inputEl.value.trim() : '';
   
   if (!text) return;
 
@@ -115,8 +121,10 @@ async function handleSendMessage() {
 
   // Add user message to UI
   window.UI.addMessage('あなた', text, true);
-  inputEl.value = '';
-  inputEl.style.height = '40px';
+  if (inputEl) {
+    inputEl.value = '';
+    inputEl.style.height = '40px';
+  }
   
   // Send to API
   setInputEnabled(false);
@@ -126,7 +134,7 @@ async function handleSendMessage() {
     window.UI.toggleTypingIndicator(false);
     await window.UI.parseAiResponseAndAddMessages(responseText);
     setInputEnabled(true);
-    inputEl.focus();
+    if (inputEl) inputEl.focus();
   } catch (error) {
     window.UI.toggleTypingIndicator(false);
     window.UI.addErrorMessage("送信に失敗しました: " + error.message, () => {
@@ -136,7 +144,7 @@ async function handleSendMessage() {
         window.UI.toggleTypingIndicator(false);
         await window.UI.parseAiResponseAndAddMessages(resp);
         setInputEnabled(true);
-        inputEl.focus();
+        if (inputEl) inputEl.focus();
       }).catch(err => {
         window.UI.toggleTypingIndicator(false);
         window.UI.addErrorMessage("再試行にも失敗しました: " + err.message);
@@ -149,41 +157,22 @@ async function handleSendMessage() {
 
 // Textarea auto-resize
 function autoResize(el) {
+  if (!el) return;
   el.style.height = '40px';
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
 function init() {
-  // 1. Render Conference Cards
-  if (window.CONFERENCE_LIST && window.UI.renderConferenceCards) {
-    window.UI.renderConferenceCards(window.CONFERENCE_LIST, (confId) => {
-      selectedConferenceId = confId;
-      const inputEl = document.getElementById('selected-conference-id');
-      if (inputEl) inputEl.value = confId;
-      updateValidationState();
-    });
-  }
+  if (isInitialized) return;
+  isInitialized = true;
 
-  // 2. Role selection listener
-  const roleSelect = document.getElementById('role-select');
-  if (roleSelect) {
-    roleSelect.addEventListener('change', (e) => {
-      selectedRole = e.target.value;
-      updateValidationState();
-    });
-  }
+  // Radio button change listeners for Conference and Difficulty
+  document.querySelectorAll('input[name="conference"]').forEach(radio => {
+    radio.addEventListener('change', syncRadioCardsUI);
+  });
 
-  // 3. Difficulty cards listener
-  const diffCards = document.querySelectorAll('.difficulty-card');
-  diffCards.forEach(card => {
-    card.addEventListener('click', () => {
-      diffCards.forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      selectedDifficulty = card.getAttribute('data-difficulty');
-      const diffInput = document.getElementById('selected-difficulty');
-      if (diffInput) diffInput.value = selectedDifficulty;
-      updateValidationState();
-    });
+  document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
+    radio.addEventListener('change', syncRadioCardsUI);
   });
 
   // Back button listener
@@ -225,12 +214,13 @@ function init() {
     new window.SpeechInput(inputEl, micBtn);
   }
 
-  // Initial validation check
-  updateValidationState();
+  // Initial sync of radio cards
+  syncRadioCardsUI();
 }
 
-// Start app on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', init);
-if (document.readyState === 'interactive' || document.readyState === 'complete') {
+// Start app
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
   init();
 }
