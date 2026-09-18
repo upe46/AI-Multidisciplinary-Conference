@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI 模擬多職種カンファレンスルーム</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>AI模擬多職種カンファレンスルーム</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,48 +12,114 @@
     <!-- Setup Screen -->
     <div id="setup-screen" class="screen active">
       <div class="glass-panel setup-panel">
-        <h1>AI 模擬多職種カンファレンスルーム</h1>
-        <p class="subtitle">NST（栄養）カンファレンスへようこそ。<br>あなたの立場と難易度を選択してください。</p>
+        <header class="setup-header">
+          <div class="brand-badge">医療教育 AIシミュレーション</div>
+          <h1 class="main-title">AI模擬多職種カンファレンスルーム</h1>
+          <p class="subtitle">参加するカンファレンス・役割・難易度を選択してください</p>
+        </header>
         
         <form id="setup-form">
-          <div class="form-group">
-            <label for="role-select">参加する立場（役割）</label>
-            <select id="role-select" required>
-              <optgroup label="学生">
-                <option value="医学生">医学生</option>
-                <option value="看護学生">看護学生</option>
-                <option value="薬学生">薬学生</option>
-                <option value="管理栄養士養成課程学生">管理栄養士養成課程学生</option>
-                <option value="臨床検査技師養成課程学生">臨床検査技師養成課程学生</option>
-                <option value="言語聴覚士（ST）養成課程学生">言語聴覚士（ST）養成課程学生</option>
-                <option value="理学療法士（PT）養成課程学生">理学療法士（PT）養成課程学生</option>
-                <option value="作業療法士（OT）養成課程学生">作業療法士（OT）養成課程学生</option>
-                <option value="その他の学生">その他の医療・福祉系学生</option>
-              </optgroup>
-              <optgroup label="新人医療従事者">
-                <option value="新人医師">新人医師</option>
-                <option value="新人看護師">新人看護師</option>
-                <option value="新人薬剤師">新人薬剤師</option>
-                <option value="新人管理栄養士">新人管理栄養士</option>
-                <option value="新人臨床検査技師">新人臨床検査技師</option>
-                <option value="新人ST">新人ST</option>
-                <option value="新人PT">新人PT</option>
-                <option value="新人OT">新人OT</option>
-                <option value="その他の新人">その他の新人医療・福祉職</option>
-              </optgroup>
-            </select>
-          </div>
+          <!-- Step 1: Conference Selection -->
+          <section class="form-section">
+            <div class="section-heading">
+              <span class="step-num">1</span>
+              <div class="heading-text">
+                <h3>参加するカンファレンスを選択してください</h3>
+                <span class="step-desc">目的に合わせた臨床カンファレンスを選択します</span>
+              </div>
+            </div>
+            <div id="conference-grid" class="conference-grid">
+              <!-- Populated dynamically via JS from window.CONFERENCE_LIST -->
+            </div>
+            <input type="hidden" id="selected-conference-id" value="">
+          </section>
 
-          <div class="form-group">
-            <label for="difficulty-select">難易度</label>
-            <select id="difficulty-select" required>
-              <option value="beginner">初級（低栄養）</option>
-              <option value="intermediate">中級（低栄養＋嚥下障害）</option>
-              <option value="advanced">上級（複雑な病態＋本人希望）</option>
-            </select>
-          </div>
+          <!-- Step 2: Role Selection -->
+          <section class="form-section">
+            <div class="section-heading">
+              <span class="step-num">2</span>
+              <div class="heading-text">
+                <h3>参加する立場（役割）</h3>
+                <span class="step-desc">シミュレーション内であなたが担当する職種・立場を選択してください</span>
+              </div>
+            </div>
+            <div class="select-wrapper">
+              <select id="role-select" required>
+                <option value="" disabled selected>参加する立場を選択してください</option>
+                <optgroup label="学生">
+                  <option value="医学生">医学生</option>
+                  <option value="看護学生">看護学生</option>
+                  <option value="薬学生">薬学生</option>
+                  <option value="管理栄養士養成課程学生">管理栄養士養成課程学生</option>
+                  <option value="臨床検査技師養成課程学生">臨床検査技師養成課程学生</option>
+                  <option value="言語聴覚士（ST）養成課程学生">言語聴覚士（ST）養成課程学生</option>
+                  <option value="理学療法士（PT）養成課程学生">理学療法士（PT）養成課程学生</option>
+                  <option value="作業療法士（OT）養成課程学生">作業療法士（OT）養成課程学生</option>
+                  <option value="その他の学生">その他の医療・福祉系学生</option>
+                </optgroup>
+                <optgroup label="新人医療従事者">
+                  <option value="新人医師">新人医師</option>
+                  <option value="新人看護師">新人看護師</option>
+                  <option value="新人薬剤師">新人薬剤師</option>
+                  <option value="新人管理栄養士">新人管理栄養士</option>
+                  <option value="新人臨床検査技師">新人臨床検査技師</option>
+                  <option value="新人ST">新人ST（言語聴覚士）</option>
+                  <option value="新人PT">新人PT（理学療法士）</option>
+                  <option value="新人OT">新人OT（作業療法士）</option>
+                  <option value="その他の新人">その他の新人医療・福祉職</option>
+                </optgroup>
+              </select>
+            </div>
+          </section>
 
-          <button type="submit" class="btn-primary">カンファレンスを開始する</button>
+          <!-- Step 3: Difficulty Selection -->
+          <section class="form-section">
+            <div class="section-heading">
+              <span class="step-num">3</span>
+              <div class="heading-text">
+                <h3>難易度</h3>
+                <span class="step-desc">あなたの習熟度に合わせてシミュレーション難易度を選択してください</span>
+              </div>
+            </div>
+            <div class="difficulty-grid">
+              <div class="difficulty-card" data-difficulty="beginner">
+                <div class="diff-header">
+                  <span class="diff-badge diff-beginner">初級</span>
+                  <span class="diff-theme">基礎的な問題把握</span>
+                </div>
+                <p class="diff-desc">AI専門職からヒントが多く提示されます。全体の流れや多職種の役割を掴むのに最適です。</p>
+              </div>
+
+              <div class="difficulty-card" data-difficulty="intermediate">
+                <div class="diff-header">
+                  <span class="diff-badge diff-intermediate">中級</span>
+                  <span class="diff-theme">複数課題の統合と連携</span>
+                </div>
+                <p class="diff-desc">AIからのヒントが減り、自発的な質問や他職種連携のアプローチが求められます。</p>
+              </div>
+
+              <div class="difficulty-card" data-difficulty="advanced">
+                <div class="diff-header">
+                  <span class="diff-badge diff-advanced">上級</span>
+                  <span class="diff-theme">複雑病態・意思決定支援</span>
+                </div>
+                <p class="diff-desc">AIは答えを誘導しません。複雑な課題の調整と自発的な提案・主導が必要です。</p>
+              </div>
+            </div>
+            <input type="hidden" id="selected-difficulty" value="">
+          </section>
+
+          <!-- Submit and Guidance -->
+          <div class="setup-actions">
+            <div id="setup-validation-msg" class="validation-msg">
+              <span class="validation-icon">ℹ️</span>
+              <span class="validation-text">① カンファレンスの種類、② 参加する立場、③ 難易度を選択してください</span>
+            </div>
+            <button type="submit" id="start-conference-btn" class="btn-primary" disabled>
+              <span>カンファレンスを開始する</span>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -61,10 +127,16 @@
     <!-- Conference Screen -->
     <div id="conference-screen" class="screen">
       <header class="chat-header glass-panel">
-        <div class="header-info">
-          <h2>NSTカンファレンス</h2>
-          <span id="current-role-badge" class="badge"></span>
-          <span id="current-difficulty-badge" class="badge outline"></span>
+        <div class="header-left">
+          <button id="back-to-setup-btn" class="btn-back" title="カンファレンス選択に戻る">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>選択に戻る</span>
+          </button>
+          <div class="header-info">
+            <h2 id="conference-header-title">カンファレンス</h2>
+            <span id="current-role-badge" class="badge"></span>
+            <span id="current-difficulty-badge" class="badge outline"></span>
+          </div>
         </div>
       </header>
 
@@ -97,13 +169,7 @@
             <div class="chat-input-header">
               <span class="target-label">相手:</span>
               <select id="target-select" class="target-select">
-                <option value="全体">👥 全員</option>
-                <option value="管理栄養士">🥗 管理栄養士（佐々木さん）</option>
-                <option value="医師">🩺 医師（佐藤先生）</option>
-                <option value="看護師">🌸 看護師（高橋さん）</option>
-                <option value="ST">🗣️ ST（渡辺さん）</option>
-                <option value="薬剤師">💊 薬剤師（松本さん）</option>
-                <option value="臨床検査技師">🔬 検査技師（中村さん）</option>
+                <!-- Populated dynamically via JS -->
               </select>
             </div>
             <div class="chat-input-row">

@@ -3,39 +3,111 @@ window.UI = {
     document.querySelectorAll('.screen').forEach(screen => {
       screen.classList.remove('active');
     });
-    document.getElementById(screenId).classList.add('active');
+    const target = document.getElementById(screenId);
+    if (target) {
+      target.classList.add('active');
+    }
   },
 
-  setBadges(role, difficultyName) {
-    document.getElementById('current-role-badge').textContent = role;
-    document.getElementById('current-difficulty-badge').textContent = difficultyName;
+  setBadges(conferenceTitle, role, difficultyName) {
+    const titleEl = document.getElementById('conference-header-title');
+    if (titleEl) {
+      titleEl.textContent = conferenceTitle;
+    }
+    const roleBadge = document.getElementById('current-role-badge');
+    if (roleBadge) {
+      roleBadge.textContent = role;
+    }
+    const diffBadge = document.getElementById('current-difficulty-badge');
+    if (diffBadge) {
+      diffBadge.textContent = difficultyName;
+    }
   },
 
-  // キャラクターのメタデータ定義
+  // キャラクターのメタデータ定義（職種ごとのアイコン・スタイル・表示名）
   ROLE_MAP: {
-    '医師': { roleClass: 'doctor', icon: '🩺', displayName: '医師 佐藤' },
-    '管理栄養士': { roleClass: 'dietitian', icon: '🥗', displayName: '管理栄養士 佐々木' },
-    '栄養士': { roleClass: 'dietitian', icon: '🥗', displayName: '管理栄養士 佐々木' },
-    '看護師': { roleClass: 'nurse', icon: '🌸', displayName: '看護師 高橋' },
-    'ST': { roleClass: 'st', icon: '🗣️', displayName: 'ST 渡辺' },
-    '言語聴覚士': { roleClass: 'st', icon: '🗣️', displayName: 'ST 渡辺' },
-    '薬剤師': { roleClass: 'pharmacist', icon: '💊', displayName: '薬剤師 松本' },
-    '臨床検査技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
-    '検査技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
-    '技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師 中村' },
-    '医療ソーシャルワーカー': { roleClass: 'msw', icon: '🤝', displayName: 'MSW 小林' },
-    'MSW': { roleClass: 'msw', icon: '🤝', displayName: 'MSW 小林' },
-    'ソーシャルワーカー': { roleClass: 'msw', icon: '🤝', displayName: 'MSW 小林' },
+    '医師': { roleClass: 'doctor', icon: '🩺', displayName: '医師' },
+    '管理栄養士': { roleClass: 'dietitian', icon: '🥗', displayName: '管理栄養士' },
+    '栄養士': { roleClass: 'dietitian', icon: '🥗', displayName: '管理栄養士' },
+    '看護師': { roleClass: 'nurse', icon: '🌸', displayName: '看護師' },
+    '師長': { roleClass: 'nurse', icon: '🌸', displayName: '病棟師長' },
+    'WOC': { roleClass: 'woc', icon: '🌸', displayName: 'WOC認定看護師' },
+    'ST': { roleClass: 'st', icon: '🗣️', displayName: 'ST（言語聴覚士）' },
+    '言語聴覚士': { roleClass: 'st', icon: '🗣️', displayName: 'ST（言語聴覚士）' },
+    'PT': { roleClass: 'pt', icon: '🏃', displayName: 'PT（理学療法士）' },
+    '理学療法士': { roleClass: 'pt', icon: '🏃', displayName: 'PT（理学療法士）' },
+    'OT': { roleClass: 'ot', icon: '🎨', displayName: 'OT（作業療法士）' },
+    '作業療法士': { roleClass: 'ot', icon: '🎨', displayName: 'OT（作業療法士）' },
+    '薬剤師': { roleClass: 'pharmacist', icon: '💊', displayName: '薬剤師' },
+    '臨床検査技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師' },
+    '検査技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師' },
+    '技師': { roleClass: 'technician', icon: '🔬', displayName: '検査技師' },
+    '医療ソーシャルワーカー': { roleClass: 'msw', icon: '🤝', displayName: 'MSW' },
+    'MSW': { roleClass: 'msw', icon: '🤝', displayName: 'MSW' },
+    'ソーシャルワーカー': { roleClass: 'msw', icon: '🤝', displayName: 'MSW' },
+    'ケアマネ': { roleClass: 'msw', icon: '📋', displayName: 'ケアマネジャー' },
+    '医療安全': { roleClass: 'safety', icon: '🛡️', displayName: '医療安全管理者' },
+    '安全管理': { roleClass: 'safety', icon: '🛡️', displayName: '医療安全管理者' },
+    '心理': { roleClass: 'msw', icon: '💭', displayName: '公認心理師' }
   },
 
   getRoleMeta(sender) {
     if (!sender) return { roleClass: '', icon: '💬', displayName: sender };
     for (const [key, meta] of Object.entries(this.ROLE_MAP)) {
       if (sender.includes(key)) {
-        return meta;
+        return {
+          roleClass: meta.roleClass,
+          icon: meta.icon,
+          displayName: sender // 送信者名そのものを活かす（例: 医師 佐藤）
+        };
       }
     }
     return { roleClass: 'ai', icon: '💬', displayName: sender };
+  },
+
+  renderConferenceCards(conferenceList, onSelect) {
+    const grid = document.getElementById('conference-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    conferenceList.forEach(conf => {
+      const card = document.createElement('div');
+      card.className = 'conference-card';
+      card.setAttribute('data-id', conf.id);
+
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="card-icon">${conf.icon || '🏥'}</span>
+          <span class="card-tag">${conf.tag || '多職種'}</span>
+        </div>
+        <div class="card-title">${conf.title}</div>
+        <p class="card-desc">${conf.description}</p>
+        <div class="card-roles">参加: ${conf.keyRoles}</div>
+      `;
+
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.conference-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        onSelect(conf.id);
+      });
+
+      grid.appendChild(card);
+    });
+  },
+
+  populateTargetSelect(scenario) {
+    const targetSelect = document.getElementById('target-select');
+    if (!targetSelect) return;
+
+    targetSelect.innerHTML = '<option value="全体">👥 全員</option>';
+    if (scenario && scenario.ai_roles) {
+      scenario.ai_roles.forEach(ai => {
+        const option = document.createElement('option');
+        option.value = ai.role;
+        option.textContent = `${ai.icon || '💬'} ${ai.title || ai.name || ai.role}`;
+        targetSelect.appendChild(option);
+      });
+    }
   },
 
   addMessage(sender, text, isUser = false, isSystem = false) {
@@ -50,7 +122,7 @@ window.UI = {
       const meta = this.getRoleMeta(sender);
       roleClass = meta.roleClass;
       icon = meta.icon;
-      displaySender = `${icon} ${meta.displayName}`;
+      displaySender = `${icon} ${displaySender}`;
     } else if (isUser) {
       displaySender = `👤 あなた`;
     }
@@ -147,7 +219,6 @@ window.UI = {
     for (let i = 0; i < messageList.length; i++) {
       const msg = messageList[i];
       this.toggleTypingIndicator(true);
-      // 最初のメッセージ前は短め、2発言目以降は約650ms待機
       const delay = i === 0 ? 300 : 650;
       await new Promise(resolve => setTimeout(resolve, delay));
       this.toggleTypingIndicator(false);
@@ -159,25 +230,30 @@ window.UI = {
     const indicator = document.getElementById('typing-indicator');
     const container = document.getElementById('chat-container');
     
-    if (show) {
-      indicator.classList.remove('hidden');
-    } else {
-      indicator.classList.add('hidden');
+    if (indicator) {
+      if (show) {
+        indicator.classList.remove('hidden');
+      } else {
+        indicator.classList.add('hidden');
+      }
     }
-    container.scrollTop = container.scrollHeight;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   },
 
   updateStatusBar(modelName) {
     const bar = document.getElementById('status-bar');
     if (bar) {
-      // ユーザーの要望により、使用モデル名は画面に表示しない
       bar.style.display = 'none';
     }
   },
 
   populatePatientInfo(scenario) {
     const container = document.getElementById('patient-info-content');
-    const p = scenario.patient;
+    if (!container) return;
+
+    const p = scenario.patient || {};
     const aiRoles = scenario.ai_roles || [];
     
     const rolesHtml = aiRoles.map(r => `
@@ -189,28 +265,30 @@ window.UI = {
             <span class="character-role">${r.title || r.role}</span>
           </div>
         </div>
-        <p class="character-desc">${r.personality || r.description}</p>
+        <p class="character-desc">${r.personality || r.description || ''}</p>
       </div>
     `).join('');
 
+    const initialInfoHtml = (p.initial_info || []).map(info => `<li>${info}</li>`).join('');
+
     container.innerHTML = `
       <div class="patient-info-section">
-        <h4>基本情報</h4>
-        <p>${p.age}歳 ${p.gender}</p>
-        <p><strong>主疾患:</strong> ${p.primary_disease}</p>
+        <h4>対象患者・事例</h4>
+        <p><strong>年齢・性別:</strong> ${p.age ? `${p.age}歳 ${p.gender || ''}` : (p.gender || '該当事例')}</p>
+        <p><strong>主診断・状況:</strong> ${p.primary_disease || ''}</p>
       </div>
       <div class="patient-info-section">
-        <h4>背景</h4>
-        <p>${p.background}</p>
+        <h4>背景・経緯</h4>
+        <p>${p.background || ''}</p>
       </div>
       <div class="patient-info-section">
-        <h4>初期・判明した情報</h4>
+        <h4>初期情報・共有事項</h4>
         <ul id="patient-dynamic-info-list">
-          ${p.initial_info.map(info => `<li>${info}</li>`).join('')}
+          ${initialInfoHtml}
         </ul>
       </div>
       <div class="patient-info-section">
-        <h4>カンファレンス参加者</h4>
+        <h4>カンファレンス参加メンバー</h4>
         <div class="character-list">
           ${rolesHtml}
         </div>
@@ -223,13 +301,12 @@ window.UI = {
     if (list) {
       const li = document.createElement('li');
       li.textContent = infoText;
-      li.style.color = '#d73a49'; // 新規追加を強調（赤系）
+      li.style.color = '#d73a49';
       li.style.fontWeight = 'bold';
       li.style.opacity = '0';
       li.style.transition = 'opacity 0.5s ease-in';
       list.appendChild(li);
       
-      // アニメーション用
       setTimeout(() => {
         li.style.opacity = '1';
       }, 50);
@@ -237,7 +314,6 @@ window.UI = {
   },
 
   setupModal() {
-    // モーダルは廃止され、サイドバーに常時表示されるようになったため、ここでは何もしません。
-    // 将来的に別のUI制御が必要な場合のために関数は残しています。
+    // 将来のUI拡張用
   }
 };

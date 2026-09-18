@@ -1,11 +1,11 @@
 const API_KEY = "AQ.Ab8RN6Lcsb0Qz3kMPBce8pn3sYq-WbM2i1d6vZVsA7owhO9WFQ";
 
-// 優先順にモデルを試行する（2026年8月時点で利用可能なモデル）
+// 優先順にモデルを試行する
 const MODEL_CANDIDATES = [
-  "gemini-3.8-flash",
-  "gemini-3.7-flash",
   "gemini-2.5-flash",
-  "gemini-3.5-flash-lite"
+  "gemini-3.7-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-3.8-flash"
 ];
 
 function getApiUrl(modelName) {
@@ -20,15 +20,27 @@ window.API = {
 
   setSystemPrompt(scenario, userRole, difficulty) {
     this.selectedRole = userRole;
-    const diffInfo = scenario.difficulty_levels[difficulty];
+    const diffInfo = scenario.difficulty_levels ? scenario.difficulty_levels[difficulty] : { name: "標準", theme: "標準", goals: [], rule: "" };
     
     // キャラクター設定をプロンプト用に整形
     let aiRolesDesc = scenario.ai_roles.map(ai => 
       `### ${ai.icon || ''} ${ai.role}：${ai.name || ''}（${ai.title || ai.role}）
 - 性格・特徴: ${ai.personality || ''}
 - 話し方・口調: ${ai.tone || ''}
-- 専門的視点: ${ai.description}`
+- 専門的視点: ${ai.description || ''}
+- 注力テーマ: ${(ai.focus || []).join('、')}`
     ).join('\n\n');
+
+    // 進行役（ファシリテーター）と推進役（キーパーソン）を特定
+    const facilitator = scenario.ai_roles.find(r => 
+      (r.title && r.title.includes('進行')) || 
+      (r.focus && r.focus.some(f => f.includes('進行')))
+    ) || scenario.ai_roles[0];
+
+    const keyPerson = scenario.ai_roles.find(r => 
+      (r.title && r.title.includes('キーパーソン')) || 
+      (r.personality && (r.personality.includes('中心') || r.personality.includes('キーパーソン')))
+    ) || scenario.ai_roles[1] || scenario.ai_roles[0];
     
     this.systemPrompt = `
 あなたは「AI模擬多職種カンファレンスルーム」を運営・シミュレーションするAIです。
@@ -36,12 +48,12 @@ window.API = {
 
 【重要：会話と発言の文法・長さのルール】
 1. 各発言は必ず「[役職名]: 発言内容」または「[役職名（名前）]: 発言内容」のフォーマットで1行ずつ出力してください。
-   例: [医師]: 〜 / [管理栄養士]: 〜 / [看護師]: 〜 / [ST]: 〜 / [薬剤師]: 〜 / [臨床検査技師]: 〜
+   例: [${facilitator.role}]: 〜 / [${keyPerson.role}]: 〜
 2. 1発言あたりの文字数は **短め（約20文字）〜標準（約30〜40文字）** を厳守してください。長文の一人語りや教科書的な解説は絶対に禁止です。各キャラクターの個性・口調を活かした自然なテンポで会話を行ってください。
-   - 良い例（約20字）: 「この案で進めていいと思います。問題ありますか？」
-   - 良い例（約35字）: 「この案で進めたいと思っています。ただ、スケジュールだけ少し気になっています。」
+   - 良い例（約20字）: 「この方針で進めてよいと思います。気になる点はありますか？」
+   - 良い例（約35字）: 「こちらの視点からは問題なさそうです。ただ、退院後のフォローが少し心配ですね。」
 3. 1回の出力の中で、AI専門職同士のやり取りを **3〜6回（3〜6行）** テンポよく展開してください。
-4. **AI同士だけで勝手に結論まで進めないでください。** 3〜6回のやり取りを行ったら、必ず最後に **[医師]:** （佐藤先生）が「${userRole}（ユーザー）」に対して発言機会を与える問いかけを行い、そこで出力を停止してください。
+4. **AI同士だけで勝手に結論まで進めないでください。** 3〜6回のやり取りを行ったら、必ず最後に **[${facilitator.role}]:** （${facilitator.name || facilitator.role}）が「${userRole}（ユーザー）」に対して発言機会を与える問いかけを行い、そこで出力を停止してください。
 
 【登場人物（キャラクター設定）】
 各AI専門職は、以下の性格・口調・名前・視点になりきって発言してください：
@@ -49,38 +61,36 @@ window.API = {
 ${aiRolesDesc}
 
 【カンファレンスにおける役割分担・チームダイナミクス】
-- **管理栄養士（佐々木さん）はNSTカンファレンスの中心的存在（推進役・キーパーソン）**です。栄養状態の評価や具体的な栄養管理計画の提案を積極的にリードし、看護師・ST・薬剤師・検査技師へ質問や連携を投げかけて議論を前進させてください。
-- **医師（佐藤先生）は進行・ファシリテーター**として全体の統括とユーザー（${userRole}）への問いかけ・引き出しを担当します。
+- **${keyPerson.role}（${keyPerson.name || keyPerson.role}）は本カンファレンスの推進役（キーパーソン）**として専門的な評価や具体的な介入提案を積極的にリードし、他職種へ質問や連携を投げかけて議論を前進させてください。
+- **${facilitator.role}（${facilitator.name || facilitator.role}）は進行・ファシリテーター**として全体の統括とユーザー（${userRole}）への問いかけ・引き出しを担当します。
 
 【学習者（ユーザー）の立場と介入ルール】
 - ユーザーの立場: 「${userRole}」
-- 医師（佐藤先生）はカンファレンスのファシリテーター（司会・進行）を務め、議論の区切りごとに${userRole}に温かく問いかけます。
-- 医師からの問いかけのバリエーション（場面に応じて適切なものを選択）：
+- ${facilitator.role}（${facilitator.name || facilitator.role}）は進行役を務め、議論の区切りごとに${userRole}に温かく問いかけます。
+- 問いかけのバリエーション（場面に応じて適切なものを選択）：
   - 「ここまで聞いて、何か気になることはありますか？ どの職種に聞いても構いません。」
   - 「誰に聞きたいですか？」
   - 「あなたの職種（${userRole}）の視点では何が気になりますか？」
-  - 「不足している情報は何だと思いますか？」
+  - 「不足している情報や確認したいことはありますか？」
   - 「この意見についてどう考えますか？」
-  - 「患者さんに確認したいことはありますか？」
-  - 「今、新しい情報が出ました。ここからどう考えますか？ 追加で確認したいことはありますか？」
 - ユーザー（${userRole}）から質問・発言・提案があった場合：
   - AIはその発言を最優先で受け止め、必ず以降のカンファレンス内容に反映してください。
-  - 質問された職種（または最も関連の深い職種）がまず短くキャラクターらしく回答し、その回答を受けて他職種（特に管理栄養士など）が反応して議論を再開します（3〜6回のやり取り後、再び佐藤先生が学生に問いかける）。
+  - 質問された職種（または関連する職種）がまず短く回答し、他職種が反応して3〜6回テンポよく議論を展開し、最後に進行役が${userRole}に問いかけて停止します。
 
 【シナリオ】
 ${scenario.title}
-患者: ${scenario.patient.age}歳 ${scenario.patient.gender} (${scenario.patient.primary_disease})
+対象患者・事例: ${scenario.patient.age ? `${scenario.patient.age}歳 ${scenario.patient.gender}` : scenario.patient.gender} (${scenario.patient.primary_disease})
 背景: ${scenario.patient.background}
-初期情報: ${scenario.patient.initial_info.join(' / ')}
-隠された情報（徐々に開示する）: ${scenario.patient.hidden_info ? scenario.patient.hidden_info.join(' / ') : 'なし'}
+初期情報: ${(scenario.patient.initial_info || []).join(' / ')}
+隠された情報（徐々に開示する）: ${(scenario.patient.hidden_info || []).join(' / ')}
 
 【難易度設定】
 難易度: ${diffInfo.name} (テーマ: ${diffInfo.theme})
-学習目標: ${diffInfo.goals.join(', ')}
+学習目標: ${(diffInfo.goals || []).join(', ')}
 ${diffInfo.rule}
 
 【会話の開始手順】
-初回は、佐藤先生（医師）がカンファレンスの開始を告げ、管理栄養士（佐々木さん）が患者の体重減少や栄養摂取低下・必要栄養量に関する懸念と評価を中心となって問題提起し、高橋看護師や渡辺STらと2〜4回短くやり取りした上で、佐藤先生が「ここまで聞いて、何か気になることはありますか？ どの職種に聞いても構いません。」などと${userRole}に問いかけて止めてください。
+初回は、${facilitator.name || facilitator.role}（${facilitator.role}）がカンファレンスの開始を告げ、${keyPerson.name || keyPerson.role}（${keyPerson.role}）が本事例の重要課題について問題提起し、他職種と2〜4回短くやり取りした上で、${facilitator.role}が「ここまで聞いて、何か気になりますか？ どの職種に質問しても構いません。」と${userRole}に問いかけて止めてください。
 `;
     
     this.conversationHistory = [];
@@ -109,31 +119,22 @@ ${diffInfo.rule}
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const errorMsg = errorData.error?.message || response.statusText;
-        console.warn(`Model ${modelName} failed: ${errorMsg}`);
-        throw new Error(errorMsg);
+        throw new Error(errorData.error?.message || `HTTP error ${response.status}`);
       }
 
-      return await response.json();
-    } catch (error) {
+      const data = await response.json();
+      return data;
+    } catch (err) {
       clearTimeout(timeoutId);
-      if (error.name === 'AbortError') {
-        throw new Error("リクエストがタイムアウトしました。ネットワーク接続を確認してください。");
-      }
-      throw error;
+      throw err;
     }
   },
 
-  async sendMessage(userMessage, isInitial = false) {
+  async sendMessage(userMessage = null, isInitial = false) {
     if (userMessage) {
       this.conversationHistory.push({
         role: "user",
         parts: [{ text: userMessage }]
-      });
-    } else if (isInitial) {
-      this.conversationHistory.push({
-        role: "user",
-        parts: [{ text: "カンファレンスを開始してください。" }]
       });
     }
 
@@ -141,46 +142,56 @@ ${diffInfo.rule}
       systemInstruction: {
         parts: [{ text: this.systemPrompt }]
       },
-      contents: this.conversationHistory,
+      contents: isInitial ? [
+        {
+          role: "user",
+          parts: [{ text: "カンファレンスを開始してください。" }]
+        }
+      ] : this.conversationHistory,
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 2500,
+        topP: 0.95,
+        maxOutputTokens: 1024
       }
     };
 
-    // キャッシュ済みのモデルがあればそれを最初に試す
-    const modelsToTry = this.activeModel
-      ? [this.activeModel, ...MODEL_CANDIDATES.filter(m => m !== this.activeModel)]
-      : [...MODEL_CANDIDATES];
-
     let lastError = null;
+    const modelsToTry = this.activeModel 
+      ? [this.activeModel, ...MODEL_CANDIDATES.filter(m => m !== this.activeModel)]
+      : MODEL_CANDIDATES;
 
-    for (const modelName of modelsToTry) {
+    for (const model of modelsToTry) {
       try {
-        console.log(`Trying model: ${modelName}...`);
-        const data = await this._callModel(modelName, payload);
-        const aiResponseText = data.candidates[0].content.parts[0].text;
+        const data = await this._callModel(model, payload);
+        const candidate = data.candidates?.[0];
+        
+        if (candidate && candidate.content && candidate.content.parts?.[0]?.text) {
+          const aiText = candidate.content.parts[0].text;
+          
+          this.activeModel = model;
+          
+          if (!isInitial) {
+            this.conversationHistory.push({
+              role: "model",
+              parts: [{ text: aiText }]
+            });
+          } else {
+            this.conversationHistory = [
+              { role: "user", parts: [{ text: "カンファレンスを開始してください。" }] },
+              { role: "model", parts: [{ text: aiText }] }
+            ];
+          }
 
-        if (this.activeModel !== modelName) {
-          this.activeModel = modelName;
-          console.log(`✅ Using model: ${modelName}`);
+          return aiText;
+        } else {
+          throw new Error("応答の形式が不正です。");
         }
-
-        this.conversationHistory.push({
-          role: "model",
-          parts: [{ text: aiResponseText }]
-        });
-
-        return aiResponseText;
-      } catch (error) {
-        lastError = error;
-        console.log(`⚠️ ${modelName} failed, trying next...`);
-        continue;
+      } catch (err) {
+        console.warn(`モデル ${model} でのエラー:`, err.message);
+        lastError = err;
       }
     }
 
-    // すべてのモデルが失敗した場合、会話履歴から最後の入力を戻す
-    this.conversationHistory.pop();
-    throw new Error("すべてのモデルが応答できませんでした。しばらく待ってから再度お試しください。\n最終エラー: " + lastError.message);
+    throw new Error(`全モデルへのリクエストが失敗しました。(${lastError?.message || "不明なエラー"})`);
   }
 };
