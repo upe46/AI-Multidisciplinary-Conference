@@ -239,6 +239,95 @@ select:focus {
 .diff-dot.intermediate { background: #F59E0B; }
 .diff-dot.advanced { background: #EF4444; }
 
+/* 4. API Key Group */
+.api-key-group {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px dashed #CBD5E1;
+  border-radius: 0.85rem;
+  padding: 0.85rem 1rem;
+  margin-top: 1rem;
+}
+
+.api-key-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.api-key-header label {
+  margin-bottom: 0;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.text-link-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.text-link-btn:hover {
+  color: var(--primary-hover);
+}
+
+.api-key-input-wrapper {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.api-key-input-wrapper input {
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1.5px solid #D1D5DB;
+  font-family: inherit;
+  font-size: 0.85rem;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.api-key-input-wrapper input:focus {
+  border-color: var(--primary-color);
+}
+
+.btn-save-key {
+  padding: 0.55rem 0.9rem;
+  background: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-save-key:hover {
+  background: #2563EB;
+}
+
+.btn-save-key.saved {
+  background: #10B981;
+}
+
+.api-key-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  line-height: 1.4;
+}
+
+.api-key-hint a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
 /* Primary Button */
 .btn-primary {
   width: 100%;

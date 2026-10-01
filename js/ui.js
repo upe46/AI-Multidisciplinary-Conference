@@ -148,24 +148,43 @@ window.UI = {
   addErrorMessage(text, retryCallback) {
     const container = document.getElementById('chat-container');
     const msgDiv = document.createElement('div');
-    msgDiv.className = 'message system';
+    msgDiv.className = 'message system error-message';
 
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
-    contentDiv.textContent = text;
+    
+    // エラーテキスト
+    const textSpan = document.createElement('span');
+    textSpan.textContent = text;
+    contentDiv.appendChild(textSpan);
+
+    const btnWrapper = document.createElement('div');
+    btnWrapper.style.marginTop = '0.6rem';
+    btnWrapper.style.display = 'flex';
+    btnWrapper.style.gap = '0.5rem';
+    btnWrapper.style.justifyContent = 'center';
 
     if (retryCallback) {
       const retryBtn = document.createElement('button');
       retryBtn.className = 'retry-btn';
-      retryBtn.textContent = '再試行';
+      retryBtn.textContent = '🔄 再試行';
       retryBtn.addEventListener('click', () => {
         msgDiv.remove();
         retryCallback();
       });
-      contentDiv.appendChild(document.createElement('br'));
-      contentDiv.appendChild(retryBtn);
+      btnWrapper.appendChild(retryBtn);
     }
 
+    const backBtn = document.createElement('button');
+    backBtn.className = 'retry-btn';
+    backBtn.style.background = '#64748B';
+    backBtn.textContent = '⚙️ 設定・APIキー入力へ戻る';
+    backBtn.addEventListener('click', () => {
+      this.showScreen('setup-screen');
+    });
+    btnWrapper.appendChild(backBtn);
+
+    contentDiv.appendChild(btnWrapper);
     msgDiv.appendChild(contentDiv);
     container.appendChild(msgDiv);
     container.scrollTop = container.scrollHeight;

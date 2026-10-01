@@ -87,6 +87,12 @@ async function handleSetupSubmit(e) {
   const role = getSelectedRole();
   const difficulty = getSelectedDifficulty();
 
+  // APIキー入力欄の値があれば自動保存
+  const apiKeyInput = document.getElementById('api-key-input');
+  if (apiKeyInput && apiKeyInput.value.trim()) {
+    localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
+  }
+
   currentScenario = (window.SCENARIOS && window.SCENARIOS[confId]) ? window.SCENARIOS[confId] : (window.SCENARIOS ? window.SCENARIOS.nst : null);
   if (!currentScenario) {
     alert("シナリオデータの取得に失敗しました。ページを再読み込みしてください。");
@@ -167,6 +173,53 @@ function autoResize(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
+function setupApiKeyControls() {
+  const apiKeyInput = document.getElementById('api-key-input');
+  const saveKeyBtn = document.getElementById('save-key-btn');
+  const toggleKeyBtn = document.getElementById('toggle-key-visibility-btn');
+
+  if (apiKeyInput) {
+    const savedKey = localStorage.getItem('gemini_api_key');
+    if (savedKey) {
+      apiKeyInput.value = savedKey;
+    }
+
+    apiKeyInput.addEventListener('input', () => {
+      if (saveKeyBtn) {
+        saveKeyBtn.textContent = '保存';
+        saveKeyBtn.classList.remove('saved');
+      }
+    });
+  }
+
+  if (saveKeyBtn && apiKeyInput) {
+    saveKeyBtn.addEventListener('click', () => {
+      const key = apiKeyInput.value.trim();
+      if (key) {
+        localStorage.setItem('gemini_api_key', key);
+        saveKeyBtn.textContent = '保存済 ✓';
+        saveKeyBtn.classList.add('saved');
+      } else {
+        localStorage.removeItem('gemini_api_key');
+        saveKeyBtn.textContent = '削除済';
+        saveKeyBtn.classList.remove('saved');
+      }
+    });
+  }
+
+  if (toggleKeyBtn && apiKeyInput) {
+    toggleKeyBtn.addEventListener('click', () => {
+      if (apiKeyInput.type === 'password') {
+        apiKeyInput.type = 'text';
+        toggleKeyBtn.textContent = '非表示';
+      } else {
+        apiKeyInput.type = 'password';
+        toggleKeyBtn.textContent = '表示切替';
+      }
+    });
+  }
+}
+
 function init() {
   if (isInitialized) return;
   isInitialized = true;
@@ -179,6 +232,9 @@ function init() {
   document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
     radio.addEventListener('change', syncRadioCardsUI);
   });
+
+  // API Key controls
+  setupApiKeyControls();
 
   // Back button listener
   const backBtn = document.getElementById('back-to-setup-btn');

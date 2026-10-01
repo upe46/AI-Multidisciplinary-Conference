@@ -1,11 +1,17 @@
-const API_KEY = "AQ.Ab8RN6Lcsb0Qz3kMPBce8pn3sYq-WbM2i1d6vZVsA7owhO9WFQ";
+// APIキー: localStorageに保存されているものを優先し、なければデフォルト値を使用
+function getApiKey() {
+  const customKey = localStorage.getItem("gemini_api_key");
+  if (customKey && customKey.trim()) {
+    return customKey.trim();
+  }
+  return "AQ.Ab8RN6Lcsb0Qz3kMPBce8pn3sYq-WbM2i1d6vZVsA7owhO9WFQ";
+}
 
-// 優先順にモデルを試行する
+// 優先順にモデルを試行する（有効なGemini公式モデル名）
 const MODEL_CANDIDATES = [
-  "gemini-2.5-flash",
-  "gemini-3.7-flash",
-  "gemini-3.5-flash-lite",
-  "gemini-3.8-flash"
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-1.5-pro"
 ];
 
 function getApiUrl(modelName) {
@@ -112,12 +118,17 @@ ${diffInfo.rule}
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
 
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      throw new Error("APIキーが設定されていません。画面上部の設定欄からGemini APIキーを入力してください。");
+    }
+
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "x-goog-api-key": API_KEY 
+          "x-goog-api-key": apiKey 
         },
         body: JSON.stringify(payload),
         signal: controller.signal
@@ -200,6 +211,11 @@ ${diffInfo.rule}
       }
     }
 
-    throw new Error(`全モデルへのリクエストが失敗しました。(${lastError?.message || "不明なエラー"})`);
+    const errMsg = lastError?.message || "不明なエラー";
+    if (errMsg.includes("UNAUTHENTICATED") || errMsg.includes("API_KEY") || errMsg.includes("401") || errMsg.includes("service account") || errMsg.includes("API key not valid")) {
+      throw new Error("Gemini APIキーが無効または認証に失敗しました。設定画面で正しいAPIキーを入力・保存してください。");
+    }
+
+    throw new Error(`AIへのリクエストが失敗しました: ${errMsg}`);
   }
 };

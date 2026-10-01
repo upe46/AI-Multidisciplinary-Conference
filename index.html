@@ -109,6 +109,21 @@
             </div>
           </div>
 
+          <!-- 4. Gemini APIキー設定 -->
+          <div class="form-group api-key-group">
+            <div class="api-key-header">
+              <label for="api-key-input">🔑 Gemini APIキー</label>
+              <button type="button" id="toggle-key-visibility-btn" class="text-link-btn">表示切替</button>
+            </div>
+            <div class="api-key-input-wrapper">
+              <input type="password" id="api-key-input" placeholder="AIzaSy... (Gemini APIキーを入力)" autocomplete="off">
+              <button type="button" id="save-key-btn" class="btn-save-key">保存</button>
+            </div>
+            <p class="api-key-hint">
+              ※ キーはブラウザ内にのみ安全に保存されます。<a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a> で無料で取得できます。
+            </p>
+          </div>
+
           <button type="button" id="start-conference-btn" class="btn-primary">カンファレンスを開始する</button>
         </form>
       </div>
