@@ -215,7 +215,7 @@ ${diffInfo.rule}
 
     const errMsg = lastError?.message || "不明なエラー";
     if (errMsg.includes("UNAUTHENTICATED") || errMsg.includes("API_KEY") || errMsg.includes("401") || errMsg.includes("service account") || errMsg.includes("API key not valid")) {
-      throw new Error("Gemini APIキーが無効または認証に失敗しました。設定画面で正しいAPIキーを入力・保存してください。");
+      throw new Error(`Gemini APIキーが無効または認証に失敗しました。設定画面で正しいAPIキーを入力・保存してください。\n(詳細: ${errMsg})`);
     }
 
     throw new Error(`AIへのリクエストが失敗しました: ${errMsg}`);
