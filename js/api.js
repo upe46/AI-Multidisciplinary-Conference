@@ -9,6 +9,9 @@ function getApiKey() {
 
 // 優先順にモデルを試行する（有効なGemini公式モデル名）
 const MODEL_CANDIDATES = [
+  "gemini-3.8-flash",
+  "gemini-3.7-flash",
+  "gemini-2.5-flash",
   "gemini-2.0-flash",
   "gemini-1.5-flash",
   "gemini-1.5-pro"
@@ -124,11 +127,10 @@ ${diffInfo.rule}
     }
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`${url}?key=${apiKey}`, {
         method: "POST",
         headers: { 
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey 
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(payload),
         signal: controller.signal
